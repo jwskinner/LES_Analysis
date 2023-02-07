@@ -1,0 +1,57 @@
+# Generated files
+*.asv
+*.ctf
+*.ctf.*
+*.ctf.mat
+*.ctf.mat.*
+*.fig
+*.mat
+*.mdlp
+*.slx
+*.slx.*
+*.slxp
+*.slxp.*
+*.xvc
+*.xvf
+
+# MATLAB System files
+bin/
+lib/
+toolbox/
+
+# Package development files
+*.mlappinstall
+*.mlappinstall.*
+
+# Code analysis results
+codemetrics.xml
+*.sla
+*.sldd
+*.slddc
+
+# Debugging and Profiling information
+covdata/
+*.cov
+*.cor
+
+# Precompiled header files
+*.pch
+
+# Core dumps
+core
+
+# Xcode files
+*.dSYM
+*.DS_Store
+
+# Data folder
+data/
+
+# Figures folder
+Figures/
+
+# Old code folder
+old_code/
+
+# Plots folder
+plots/
