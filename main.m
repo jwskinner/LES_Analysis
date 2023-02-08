@@ -2,10 +2,10 @@
 
 clear variables 
 
-txt = 'CP';
+txt = 'NOCP';
 %folder = strcat('./', txt, '/');
 %folder = './new/TEST/NOCP_OUT/'
-folder = '/scratch/05999/mkurowsk/ocean_cp/'; 
+folder = '/scratch/05999/mkurowsk/ocean_nocp/'; 
 
 output = './plots/';
 
@@ -37,13 +37,13 @@ for i = 1:length(files_all)
     [variable] = loadNetCDF(fname, 'RAINNC'); 
 
     % Make plots with params 
-    params.cmax = 40 
+    params.cmax = 40; 
     params.cmin = 0; 
     params.time = (i-1)*nam.dt; 
     params.name = file; 
     params.save_folder = append(output, variable.Name, '/');
     params.save_movie = txt;                                               % Output a movie and name it CP or NOCP 
-    plot_fields(variable, nam, params)
+%    plot_fields(variable, nam, params)
 
 
 % Plot budget Terms 
@@ -56,9 +56,9 @@ for i = 1:length(files_all)
 %         two_point_cor(file, folder, nam, output, i)
     
 %% Compute and plot 1D profiles 
-%    [Z, U,TH, QT, QC, TKE, TKE_HOR, TKE_W, WAT_FLUX] = oned_profiles(file, nam, output, 'NOCP'); 
-%    [Z_CP, U_CP,TH_CP, QT_CP, QC_CP, TKE_CP, TKE_HOR_CP, TKE_W_CP, WAT_FLUX_CP] = oned_profiles(file, nam, output, 'CP');
-%    plot_oned_profiles(Z, U,TH, QT, QC, TKE, TKE_HOR, TKE_W, WAT_FLUX, Z_CP, U_CP,TH_CP, QT_CP, QC_CP, TKE_CP, TKE_HOR_CP, TKE_W_CP, WAT_FLUX_CP)
+    [Z, U,TH, QT, QC, TKE, TKE_HOR, TKE_W, WAT_FLUX] = oned_profiles(fname, nam); 
+    [Z_CP, U_CP,TH_CP, QT_CP, QC_CP, TKE_CP, TKE_HOR_CP, TKE_W_CP, WAT_FLUX_CP] = oned_profiles(file, nam, output, 'CP');
+    plot_oned_profiles(Z, U,TH, QT, QC, TKE, TKE_HOR, TKE_W, WAT_FLUX, Z_CP, U_CP,TH_CP, QT_CP, QC_CP, TKE_CP, TKE_HOR_CP, TKE_W_CP, WAT_FLUX_CP)
 %     
 %      catch
 %          fprintf('File %s failed\n',file)

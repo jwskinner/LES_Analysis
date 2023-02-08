@@ -1,8 +1,4 @@
-function [Z, U,TH, QT, QC, TKE, TKE_HOR, TKE_W, WAT_FLUX] = oned_profiles(file, nam, output, txt)
-
-% This plots figure 4 of LAMAAKEL AND MATHEOU paper
-folder = strcat('./', txt, '/');
-fname=strcat(folder,file);
+function [Z, U,TH, QT, QC, TKE, TKE_HOR, TKE_W, WAT_FLUX] = oned_profiles(fname, nam)
 
 %% ========================================================================
 % read all relevant 3-D variables

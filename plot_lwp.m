@@ -51,7 +51,10 @@ LWP = trapz(Z',qtrho,3);                                                   % ver
  
 %% Plot Liquid Water Path 
 
-figure1 = figure;
+% Get the screen size
+scrsz = get(0,'ScreenSize');
+
+figure1 = figure('Position', [0 0 scrsz(3)*0.5 scrsz(3)*0.4]);
 axes1 = axes('Parent',figure1);
 hold(axes1,'on');
 
@@ -79,12 +82,12 @@ set(axes1,'CLim',[40 60],'ColorScale','log','Colormap',...
 colorbar(axes1,'Limits',[0 100]);
 
 f = gcf;
-export = 'frames'; 
+export = 'mov'; 
 
 if strcmp('frames',export) 
-    exportgraphics(f,strcat(output, 'LWP/', file, '_', nam.txt, '.png'),'Resolution',300)
+    exportgraphics(f,strcat(output, 'LWP/', file, '_', nam.txt, '.png'),'Resolution',150)
 else
-     exportgraphics(f,strcat(output, 'LWP/', 'movie', '.gif'),'Resolution',300, 'Append',true)
+     exportgraphics(f,strcat(output, 'LWP/', 'movie', '.gif'),'Resolution',150, 'Append',true)
 end 
 
 end
