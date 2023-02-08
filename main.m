@@ -4,12 +4,13 @@ clear variables
 
 txt = 'CP';
 %folder = strcat('./', txt, '/');
-folder = './new/TEST/NOCP_OUT/'
+%folder = './new/TEST/NOCP_OUT/'
+folder = '/scratch/05999/mkurowsk/ocean_cp/'; 
 
 output = './plots/';
 
 % Get a list of all files in the current directory                         
-files_all = dir(strcat(folder, 'wrf*'));
+files_all = dir(strcat(folder, 'wrfout*'));
 
 nam.R=287.04;                                                              % [J/kg/K]
 nam.cp=1004.67;                                                            % [J/kg/K]
@@ -21,7 +22,7 @@ nam.P0=1.e5;                                                               % ncr
 nam.dx=double(ncreadatt(strcat(folder,files_all(1).name),'/','DX'));       % [m]
 nam.dy=double(ncreadatt(strcat(folder,files_all(1).name),'/','DY'));       % [m]
 nam.txt = txt;                                                             % A label for the data
-nam.dt = 4.0;                                                              % Output frequency [hours]
+nam.dt = 0.5;                                                              % Output frequency [hours]
 
 % For creating movies frame by frame 
 for i = 1:length(files_all)
@@ -33,11 +34,10 @@ for i = 1:length(files_all)
     fname=strcat(folder,file);
 
 % Make 2D Movie plots  
-    [variable] = loadNetCDF(fname, 'CLDFRA'); 
+    [variable] = loadNetCDF(fname, 'RAINNC'); 
 
-    test = max(variable.Data)
     % Make plots with params 
-    params.cmax = 0.01 
+    params.cmax = 40 
     params.cmin = 0; 
     params.time = (i-1)*nam.dt; 
     params.name = file; 

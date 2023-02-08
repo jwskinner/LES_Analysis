@@ -14,14 +14,15 @@ function plot_fields(varargin)
     scrsz = get(0,'ScreenSize');
 
     % Set the figure width to be equal to the screen width
+    clear figure
     figure('Position', [0 0 scrsz(3)*0.3 scrsz(3)*0.3]);
     
     for i = 1:n
-        data = varargin{i}.Data; 
-        s=size(data);
-        n=s(1); n=s(1); m=s(2); l=s(3); nm=n*m; 
+        data = varargin{i}.Data;  
         
         if isfield(params, 'mean')
+            s=size(data);
+            n=s(1); n=s(1); m=s(2); l=s(3); nm=n*m;
             data = mean(reshape(data,nm,l)); 
         end 
         
