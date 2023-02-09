@@ -3,9 +3,9 @@
 clear variables 
 
 txt = 'NOCP';
-%folder = strcat('./', txt, '/');
-%folder = './new/TEST/NOCP_OUT/'
-folder = '/scratch/05999/mkurowsk/ocean_nocp/'; 
+
+folder = './data/small_domain/NOCP_OUT/'
+%folder = '/scratch/05999/mkurowsk/ocean_nocp/'; 
 
 output = './plots/';
 
@@ -34,15 +34,15 @@ for i = 1:length(files_all)
     fname=strcat(folder,file);
 
 % Make 2D Movie plots  
-    [variable] = loadNetCDF(fname, 'RAINNC'); 
+%     [variable] = loadNetCDF(fname, 'RAINNC'); 
 
     % Make plots with params 
-    params.cmax = 40; 
-    params.cmin = 0; 
-    params.time = (i-1)*nam.dt; 
-    params.name = file; 
-    params.save_folder = append(output, variable.Name, '/');
-    params.save_movie = txt;                                               % Output a movie and name it CP or NOCP 
+%     params.cmax = 40; 
+%     params.cmin = 0; 
+%     params.time = (i-1)*nam.dt; 
+%     params.name = file; 
+%     params.save_folder = append(output, variable.Name, '/');
+%     params.save_movie = txt;                                               % Output a movie and name it CP or NOCP 
 %    plot_fields(variable, nam, params)
 
 
@@ -56,10 +56,26 @@ for i = 1:length(files_all)
 %         two_point_cor(file, folder, nam, output, i)
     
 %% Compute and plot 1D profiles 
-    [Z, U,TH, QT, QC, TKE, TKE_HOR, TKE_W, WAT_FLUX] = oned_profiles(fname, nam); 
-    [Z_CP, U_CP,TH_CP, QT_CP, QC_CP, TKE_CP, TKE_HOR_CP, TKE_W_CP, WAT_FLUX_CP] = oned_profiles(file, nam, output, 'CP');
-    plot_oned_profiles(Z, U,TH, QT, QC, TKE, TKE_HOR, TKE_W, WAT_FLUX, Z_CP, U_CP,TH_CP, QT_CP, QC_CP, TKE_CP, TKE_HOR_CP, TKE_W_CP, WAT_FLUX_CP)
-%     
+
+cold_pools = ["CP", "NOCP"];
+folders = ["./data/small_domain/CP_OUT/", "./data/small_domain/NOCP_OUT/"];
+
+for j = 1:2
+    cp = cold_pools(j); 
+        fname=strcat(folders(j),file); 
+        [Z, U(j,:),TH(j,:), QT(j,:), QC(j,:), TKE(j,:), TKE_HOR(j,:), ...
+            TKE_W(j,:), WAT_FLUX(j,:)] = oned_profiles(fname, nam);      
+end
+
+params = {U, TH, QT, QC, TKE, TKE_HOR, TKE_W, WAT_FLUX, Z};
+xlabels = {"u (ms^{-1})", "\theta (K)", "q_t (gkg^{-1})", "q_c (gkg^{-1})", ...
+               "TKE (m^2s^{-2})", "1/2(u'^2+v'^2) (m^2s^{-2})", "1/2(w'^2) (m^2s^{-2})", ...
+               "\times 10^{-2} (w'q_t') (mgs^{-1}kg^{-1})"};
+legendLabels = {'CP', 'NO CP'};
+
+plot_1d_profs(params, xlabels, legendLabels)
+
+
 %      catch
 %          fprintf('File %s failed\n',file)
 %      end

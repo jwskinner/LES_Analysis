@@ -39,8 +39,7 @@ m=s(2);
 l=s(3); 
 nm=n*m;
 
-HS=mean(reshape(ph+phb,nm,l+1));                                           % Jack added +1 here to fix reshape [check] 
-%H=0.5*(HS(1:end-1,:)+HS(2:end,:));                                        % Why is this an empty matrix (?)
+HS=mean(reshape(ph+phb,nm,l+1));                                                                                    
 H=0.5*(HS(:,1:end-1)+HS(:,2:end));                                         % Jack flipped the indexing to get the half values here 
 
 ZS=HS./nam.g;                                                              % height at w-levels [m]
@@ -81,54 +80,4 @@ WAT_FLUX = (mean(reshape(wpert,nm,l)).*mean(reshape(qtpert,nm,l)));        % Tot
 
 rho=p./(nam.R*tv);                                                         % density
 RHO=mean(reshape(thil,nm,l));
-         
-
-
-%% Jack Old plots for diagnostics 
-
-% figure()
-% subplot(241);
-% plot(U, Z/10^3,'LineWidth',2);hold on;grid on
-% xlabel("u (ms^{-1})")
-% ylabel('Height [km]')
-% 
-% subplot(242);
-% plot(TH,Z/10^3,'LineWidth',2);grid on;
-% ylabel('Height [km]')
-% xlabel("\theta (K)")
-% 
-% 
-% subplot(243);
-% plot(QT,Z/10^3,'LineWidth',2);grid on;
-% ylabel('Height [km]')
-% xlabel("q_t (gkg^{-1})")
-% 
-% subplot(244);
-% plot(QC,Z/10^3,'LineWidth',2);grid on;
-% ylabel('Height [km]')
-% xlabel("q_c (gkg^{-1})")
-% 
-% 
-% subplot(245);
-% plot(TKE,Z/10^3,'LineWidth',2);grid on;
-% ylabel('Height [km]')
-% xlabel("TKE (m^2s^{-2})")
-% 
-% subplot(246);
-% plot(TKE_HOR,Z/10^3,'LineWidth',2);grid on;
-% ylabel('Height [km]')
-% xlabel("1/2(u'^2+v'^2) (m^2s^{-2})")
-% 
-% subplot(247);
-% plot(TKE_W,Z/10^3,'LineWidth',2);grid on;
-% ylabel('Height [km]')
-% xlabel("1/2(w'^2) (m^2s^{-2})")
-% 
-% subplot(248);
-% plot(WAT_FLUX.*10^2,Z/10^3,'LineWidth',2);grid on;
-% ylabel('Height [km]')
-% xlabel("\times 10^{-2} (w'q_t') (mgs^{-1}kg^{-1})")
-%f1 = gcf;
-
-%exportgraphics(f1,strcat(output, 'temps/', file, '_', nam.txt, '.png'),'Resolution',300)
 
