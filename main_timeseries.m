@@ -5,21 +5,23 @@
 % OUTPUT: (qtvar,thilvar) - structures with variance terms
 
 % Define constants
-R = 287.04;                 % [J/kg/K]
-cp = 1004.67;               % [J/kg/K]
-g = 9.81;                   % [m/s^2]
-Ll = 2.50e6;                % latent heat of evaporation (vapor:liquid) at 0C [J/kg]
-Li = 2.83e6;                % latent heat of sublimation (vapor:solid) at 0C [J/kg]
-T0 = 300;                   % base state temperature [K]
-P0 = 1.e5;                  % base state pressure [Pa]
-dt = 0.5;                   % Output frequency in hours
+nam.R = 287.04;                 % [J/kg/K]
+nam.cp = 1004.67;               % [J/kg/K]
+nam.g = 9.81;                   % [m/s^2]
+nam.Ll = 2.50e6;                % latent heat of evaporation (vapor:liquid) at 0C [J/kg]
+nam.Li = 2.83e6;                % latent heat of sublimation (vapor:solid) at 0C [J/kg]
+nam.T0 = 300;                   % base state temperature [K]
+nam.P0 = 1.e5;                  % base state pressure [Pa]
+nam.dt = 0.5;                   % Output frequency in hours
 
 % Define the folders for each case
-cold_pools = {"./data/small_domain/CP_OUT/", "./data/small_domain/NOCP_OUT/"};
+cold_pools = ["./data/small_domain/CP_OUT/", "./data/small_domain/NOCP_OUT/"];
 
 % Get a list of all files in each folder
 files_cp = dir(strcat(cold_pools{1}, 'wrfout*'));
 files_nocp = dir(strcat(cold_pools{2}, 'wrfout*'));
+
+files_all = files_cp; % choose the folder with shortest output
 
 % Preallocate arrays for storing the computed values; index 1 is for CP or
 % NOCP
@@ -34,7 +36,7 @@ CLDFR_out = zeros(2, num_files);
 time_hours = zeros(1, num_files);
 
 % Import and calculate vertical structure variables for one of the files
-[Z, p, H] = vert_struct(strcat(folders(1),files_all(1).name), nam);
+[Z, p, H] = vert_struct(strcat(cold_pools(1),files_cp(1).name), nam);
 
 % Loop over the files and cases
 for i = 1:num_files
@@ -46,7 +48,7 @@ for i = 1:num_files
         fprintf('Filename: %s\n', files_all(i).name);
 
         file = files_all(i).name;
-        fname=strcat(folders(j),file);
+        fname=strcat(cp,file);
 
         [rainnc, tke, precr, precg, cldfr] = loadNetCDF(fname, 'RAINNC', 'TKE', 'PRECR', 'PRECG', 'CLDFRA');
 
