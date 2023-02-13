@@ -33,6 +33,8 @@ PRECR_out = zeros(2, num_files);
 PRECG_out = zeros(2, num_files);
 CLDFR_out = zeros(2, num_files);
 
+TPC_out = zeros(2, 256); % two point correlation function
+
 time_hours = zeros(1, num_files);
 
 % Import and calculate vertical structure variables for one of the files
@@ -65,12 +67,22 @@ for i = 1:num_files
         LWP_out(j, i) = trapz(Z,LWP);
         CLDFR_out(j, i) = trapz(Z,CLDFR);
 
+        %% 
+        % Compute two point correlation functions
+%         [u] = loadNetCDF(fname, 'U');
+%         TPC_out(j, :) = two_point_cor(u, nam);
+% 
+%         figure()
+%         plot(TPC_out(1, :), 'Linewidth', 1.5); hold on;
+%         plot(TPC_out(2, :), 'Linewidth', 1.5); hold on;
+
 
     end
     time_hours(i) = 0 + (i-1)*nam.dt;
 
 
 end
+
 
 
 %%
