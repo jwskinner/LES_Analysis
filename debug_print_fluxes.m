@@ -4,7 +4,7 @@ clear variables
 
 txt = 'NOCP';
 
-folder = './data/large_domain/NOCP_OUT/'
+folder = './data/large_domain/CP_OUT/'
 %folder = '/scratch/05999/mkurowsk/ocean_nocp/';
 
 output = './plots/';
@@ -25,7 +25,7 @@ nam.txt = txt;                                                             % A l
 nam.dt = 0.5;                                                              % Output frequency [hours]
 
 fprintf('Filename: %s\n', files_all(1).name);
-file = files_all(1).name;
+file = files_all(3).name;
 fname=strcat(folder,file);
 
 [hfx_for, lh_for, tsk, hfx_tend, lh_tend, grxflx, swdown, glw, swnorm, ...
