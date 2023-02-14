@@ -12,10 +12,11 @@ nam.Ll = 2.50e6;                % latent heat of evaporation (vapor:liquid) at 0
 nam.Li = 2.83e6;                % latent heat of sublimation (vapor:solid) at 0C [J/kg]
 nam.T0 = 300;                   % base state temperature [K]
 nam.P0 = 1.e5;                  % base state pressure [Pa]
-nam.dt = 4.0;                   % Output frequency in hours
+nam.dt = 0.5;                   % Output frequency in hours
 
 % Define the folders for each case
-cold_pools = ["./data/large_domain/CP_OUT/", "./data/large_domain/NOCP_OUT/"];
+% cold_pools = ["./data/large_domain/CP_OUT/", "./data/large_domain/NOCP_OUT/"];
+cold_pools = ["'/scratch/05999/mkurowsk/ocean_nocp/", "/scratch/05999/mkurowsk/ocean_cp/"]
 
 % Get a list of all files in each folder
 files_cp = dir(strcat(cold_pools{1}, 'wrfout*'));
@@ -25,7 +26,7 @@ files_all = files_cp; % choose the folder with shortest output
 
 % Preallocate arrays for storing the computed values; index 1 is for CP or
 % NOCP
-num_files = 6 %length(files_nocp);
+num_files = 20 %length(files_nocp);
 TKE_out = zeros(2, num_files);
 LWP_out = zeros(2, num_files);
 RAINNC_out = zeros(2, num_files);
