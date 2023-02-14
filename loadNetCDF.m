@@ -10,7 +10,7 @@ finfo = ncinfo(filename);
 
 % Loop through each specified variable
 for i = 1:nargin-1
-    
+    clear varargin{i} % Clear variable from memory if its held there already
     % Load the variable using ncread
     varargout{i}.Data = ncread(filename, varargin{i});
     varargout{i}.Units = ncreadatt(filename, varargin{i}, 'units');
