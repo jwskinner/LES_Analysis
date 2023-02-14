@@ -12,7 +12,7 @@ nam.Ll = 2.50e6;                % latent heat of evaporation (vapor:liquid) at 0
 nam.Li = 2.83e6;                % latent heat of sublimation (vapor:solid) at 0C [J/kg]
 nam.T0 = 300;                   % base state temperature [K]
 nam.P0 = 1.e5;                  % base state pressure [Pa]
-nam.dt = 0.5;                   % Output frequency in hours
+nam.dt = 4.0;                   % Output frequency in hours
 
 % Define the folders for each case
 % cold_pools = ["./data/large_domain/CP_OUT/", "./data/large_domain/NOCP_OUT/"];
@@ -45,9 +45,9 @@ time_hours = zeros(1, num_files);
 [Z, p, H] = vert_struct(strcat(cold_pools(1),files_cp(1).name), nam);
 
 % Loop over the files and cases
-parfor i = 1:num_files
+for i = 1:num_files
 
-    for j = 1:2
+    parfor j = 1:2
 
         cp = cold_pools(j);
         try 

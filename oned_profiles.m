@@ -80,4 +80,8 @@ WAT_FLUX = (mean(reshape(wpert,nm,l)).*mean(reshape(qtpert,nm,l)));        % Tot
 
 rho=p./(nam.R*tv);                                                         % density
 RHO=mean(reshape(thil,nm,l));
+qtrho = qt.*rho;
+
+%LWP = trapz(Z',qtrho,3);                                                   % vertically integrated LWP
+
 

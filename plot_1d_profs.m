@@ -1,4 +1,4 @@
-function plot_1d_profs(params, xlabels, legendLabels) 
+function plot_1d_profs(params, xlabels, legendLabels, time) 
     %% plots the vertical 1d profiles in format (Z, params, data...)
 
     scrsz = get(0,'ScreenSize');
@@ -16,16 +16,23 @@ function plot_1d_profs(params, xlabels, legendLabels)
     xlimits(7,:) = [0, 10^-15];
     xlimits(8,:) = [-10^-14, 10^-14];
 
+
+    ylimits = [0,7];
+
     for i = 1:8
         subplot(2,4,i);
-        P1 = plot(params{i}(1,:), Z/10^3, 'LineWidth', 2); hold on; grid on;
-        P2 = plot(params{i}(2,:), Z/10^3, 'LineWidth', 2);
-        legend([P1, P2], legendLabels, 'Location', 'best')
+        for j = 1:size(params{i}, 1) % Loops over lines to plot
+            P(i) = plot(params{i}(j,:), Z/10^3, 'LineWidth', 2); ...
+                hold on; grid on;
+        end
+        legend(legendLabels, 'Location', 'northeast')
         xlabel(xlabels{i})
         ylabel('Height [km]')
         xlim([xlimits(i,1), xlimits(i,2)])
+        ylim(ylimits)
     end
-
-    exportgraphics(gcf,strcat('./plots/profiles/', 'profiles', '.gif'),'Resolution',150, 'Append',true)
+    sgtitle(strcat(num2str(time), ' hours'))
+    exportgraphics(gcf,strcat('./plots/profiles/', 'profiles', '.gif'),...
+        'Resolution',150, 'Append',true)
 
 end
