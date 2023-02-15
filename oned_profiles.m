@@ -1,4 +1,4 @@
-function [Z, U, TH, QT, QC, TKE, TKE_HOR, TKE_W, LWP] = oned_profiles(fname, nam)
+function [Z, U, TH, QT, QC, TKE, TKE_HOR, TKE_W, TEMP, TOT_WAT] = oned_profiles(fname, nam)
 
 %% ========================================================================
 % read all relevant 3-D variables
@@ -6,6 +6,17 @@ function [Z, U, TH, QT, QC, TKE, TKE_HOR, TKE_W, LWP] = oned_profiles(fname, nam
 u=ncread(fname,'U'); u=0.5*(u(1:end-1,:,:,:)+u(2:end,:,:,:)); %C->A grid
 v=ncread(fname,'V'); v=0.5*(v(:,1:end-1,:,:)+v(:,2:end,:,:)); 
 w=ncread(fname,'W'); w=0.5*(w(:,:,1:end-1,:)+w(:,:,2:end,:));
+
+% Can put this is in to import the variables because it retains the units
+% and description for each one which is useufl later. 
+% [ph, phb, tke, p, pb, th] = loadNetCDF(fname, 'PH', 'PHB', 'TKE', 'P', ...
+%     'PB', 'T'); 
+% 
+% [qv, qc, qr, qi, qs, qg, kh, qvtend, qctend, qitend, thtend] = ...
+%     loadNetCDF(fname, 'QVAPOR','QCLOUD','QRAIN', 'QICE', 'QSNOW',...
+%     'QGRAUP', 'XKHH','QVTEND_MICRO','QCTEND_MICRO','QITEND_MICRO', ...
+%     'THTEND_MICRO'); 
+
 
 ph =ncread(fname,'PH' );                                                   % geopotential perturbation [m2/s2]
 phb=ncread(fname,'PHB');                                                   % base geopotential [m2/s2)
@@ -40,7 +51,7 @@ l=s(3);
 nm=n*m;
 
 HS=mean(reshape(ph+phb,nm,l+1));                                                                                    
-H=0.5*(HS(:,1:end-1)+HS(:,2:end));                                         % Jack flipped the indexing to get the half values here 
+H=0.5*(HS(:,1:end-1)+HS(:,2:end));                                         
 
 ZS=HS./nam.g;                                                              % height at w-levels [m]
 Z=H./nam.g';                                                               % height at mass-levels [m]
@@ -56,7 +67,10 @@ qtpr(1,1,:)=QT;
 qtpert=bsxfun(@minus,qt,qtpr);
 
 TH=mean(reshape(th,nm,l));
-t=th.*exn;                                                                 % temperature
+
+t=th.*exn;                                                                 % temperature [K]
+TEMP = mean(reshape(t,nm,l));
+
 tv=t.*(1+0.608*qv);                                                        % virtual temperature, bouyancy is tv - ql (eq. 1 Marcin)
 thil=th-(nam.Ll*qc+nam.Li*qi)./(nam.cp*exn);                               % liquid water potential temperature
 
@@ -76,12 +90,18 @@ TKE_hor = 0.5*(upert.^2 + vpert.^2);
 TKE_HOR=mean(reshape(TKE_hor,nm,l));
 TKE_W = 0.5*mean(reshape(wpert,nm,l)).^2;
 
-%WAT_FLUX = (mean(reshape(wpert,nm,l)).*mean(reshape(qtpert,nm,l)));        % Total water flux 
+%WAT_FLUX = (mean(reshape(wpert,nm,l)).*mean(reshape(qtpert,nm,l)));       % Total water flux 
 
 rho=p./(nam.R*tv);                                                         % density
 RHO=mean(reshape(thil,nm,l));
 qtrho = qt.*rho;
 
-LWP = mean(reshape(qtrho,nm,l));                                           % LWP in height Z. 
+% Rough calculation of total water from air mass and total water mixing
+% ratio
+% (double check this)
+v_air = (nam.dx * nam.dy * (max(Z)/nam.levs));                             % Volume of each grid box [m^3]
+M_AIR = RHO .* v_air;
+
+TOT_WAT = (M_AIR .* QT) ./ (1 + QT);                                       % Total water [Kg] (Jack double check this)
 
 

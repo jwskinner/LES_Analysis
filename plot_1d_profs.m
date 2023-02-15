@@ -9,12 +9,12 @@ function plot_1d_profs(params, xlabels, titles, legendLabels, time)
     xlimits = zeros(8, 2);
     xlimits(1,:) = [-2, 2];
     xlimits(2,:) = [290, 320];
-    xlimits(3,:) = [0.005, 0.02];
-    xlimits(4,:) = [0, 0.2*10^-4];
-    xlimits(5,:) = [0, 0.2];
-    xlimits(6,:) = [0, 1];
-    xlimits(7,:) = [0, 10^-16];
-    xlimits(8,:) = [0, 0.02];
+    xlimits(3,:) = [270,300];
+    xlimits(4,:) = [0.005, 0.02];
+    xlimits(5,:) = [0, 0.2*10^-4];
+    xlimits(6,:) = [0, 0.2];
+    xlimits(7,:) = [0, 1];
+    xlimits(8,:) = [0, 10^7];
 
 
     ylimits = [0,4];

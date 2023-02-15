@@ -31,8 +31,7 @@ m=s(2);
 l=s(3); 
 nm=n*m;
 
-HS=mean(reshape(ph+phb,nm,l+1));                                           % Jack added +1 here to fix reshape [CHECK THIS?!?!] 
-%H=0.5*(HS(1:end-1,:)+HS(2:end,:));                                        % Why the fuck is this an empty matrix (?)
+HS=mean(reshape(ph+phb,nm,l+1));                                            
 H=0.5*(HS(:,1:end-1)+HS(:,2:end));                                         % Jack flipped the indexing to get the half values here 
 
 Z=H./nam.g';                                                               % height at mass-levels [m]

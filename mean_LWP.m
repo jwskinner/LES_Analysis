@@ -29,7 +29,5 @@ tv=t.*(1+0.608*qv);                                                        % vir
 rho=p./(nam.R*tv);                                                         % density
 
 qtrho = qt.*rho;                                                           % LWP 
-
-LWP = mean(reshape(qtrho,nm,l));                                          % LWP in height Z. 
         
 end
