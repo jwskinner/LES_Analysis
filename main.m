@@ -7,6 +7,9 @@ txt = 'NOCP';
 folder = './data/large_domain/CP_OUT/'
 %folder = '/scratch/05999/mkurowsk/ocean_nocp/';
 
+% Which plot diagnostic to use: 
+plot_out = 3; % 0: Fields, 1: Budgets, 2:LWP, 3:1D profiles, 4: Vertical Structure
+
 output = './plots/';
 
 % Get a list of all files in the current directory
@@ -29,94 +32,110 @@ nam.nx = size(ncread(sample_file,'U'), 1);                                 % Num
 nam.ny = size(ncread(sample_file,'U'), 2);                                 % Number of y grid points in simulation
 
 % For creating movies frame by frame
-for i = 10:10 %length(files_all)
+for i = 4:4 %length(files_all)
 
-%     try
+    %     try
+    %% -- Compute and plot files frame by frame into a movie --
 
-    fprintf('Filename: %s\n', files_all(i).name);
-    file = files_all(i).name;
-    fname=strcat(folder,file);
+    if plot_out == 0
 
-%     % Make 2D Movie plots
-%         [variable] = loadNetCDF(fname, 'HFX');
-% 
-% %     Make plots with params
-%         params.cmax = 40;
-%         params.cmin = 0;
-%         params.time = (i-1)*nam.dt;
-%         params.name = file;
-%         params.save_folder = append(output, variable.Name, '/');
-%         params.save_movie = txt;                                               % Output a movie and name it CP or NOCP
-%         plot_fields(variable, nam, params)
-
-
-    % Plot budget Terms
-    %         plot_budget_terms(file, folder, nam, output, i)
-
-    % Plot Liquid Water Path
-    %         plot_lwp(file, folder, nam, output, i)
-
-    %% Compute and plot 1D profiles
-
-    cold_pools = ["Large Domain, CP old", "Small Domain, CP old"];
-    folders = ["./data/large_domain/CP_OUT/", "./data/small_domain/NOCP_OUT/"];
-
-%     for j = 1:size(folders, 2)
-%         cp = cold_pools(j);
-%         fname=strcat(folders(j),file);
-%         [Z, U(j,:),TH(j,:), QT(j,:), QC(j,:), TKE(j,:), TKE_HOR(j,:), ...
-%             TKE_W(j,:), WAT_FLUX(j,:)] = oned_profiles(fname, nam);
-%     end
-% 
-%     params = {U, TH, QT, QC, TKE, TKE_HOR, TKE_W, WAT_FLUX, Z};
-%     xlabels = {"u (ms^{-1})", "\theta (K)", "q_t (gkg^{-1})", "q_c (gkg^{-1})", ...
-%         "TKE (m^2s^{-2})", "1/2(u'^2+v'^2) (m^2s^{-2})", "1/2(w'^2) (m^2s^{-2})", ...
-%         "\times 10^{-2} (w'q_t') (mgs^{-1}kg^{-1})"};
-%     legendLabels = {'CP', 'NO CP'};
-%     time = i*nam.dt; 
-%     plot_1d_profs(params, xlabels, legendLabels, time)
-
-    %% Plot out the vertical structure 
-
-    figure()
-    for j = 1:size(folders, 2)
-        % Get a list of all files in the current directory
-        files_all = dir(strcat(folders(j), 'wrfout*'));
+        fprintf('Filename: %s\n', files_all(i).name);
         file = files_all(i).name;
         fname=strcat(folder,file);
-        nam.levs = size(ncread(strcat(folders(j),file),'U'), 3);                      
-        Z = zeros(2, nam.levs); 
-        P = zeros(2, nam.levs);
-        H = zeros(2, nam.levs);
 
-        cp = cold_pools(j);
-        fname=strcat(folders(j),file);
-        [Z(j, :), P(j,:), H(j,:)] = vert_struct(fname, nam); 
+        % Load the data
+        [variable] = loadNetCDF(fname, 'HFX');
 
-        subplot(1, 2, j)
-        plot(P(j,:)/10^5, Z(j,:)/10^3, '-o', 'LineWidth', 2); grid on;
-        xlabel('P [bar]')
-        ylabel('z [km]')
-        set(gca, 'XScale', 'log')
-        set(gca, 'XDir','reverse')
-        title(cold_pools(j))
-        
-%         % Plot the difference if needed
-%         subplot(1, 3, j+1)
-%         plot(P(1,:)/10^5 - P(2,:)/10^5, Z(1,:)/10^3, '-o', 'LineWidth', 2); grid on;
-%         xlabel('P [bar]')
-%         ylabel('z [km]')
-% %         set(gca, 'XScale', 'log')
-%         set(gca, 'XDir','reverse')
-%         title('Difference')
+        % Make plots with params
+        params.cmax = 40;
+        params.cmin = 0;
+        params.time = (i-1)*nam.dt;
+        params.name = file;
+        params.save_folder = append(output, variable.Name, '/');
+        params.save_movie = txt;                                               % Output a movie and name it CP or NOCP
+        plot_fields(variable, nam, params)
+    end
+
+    %% -- Plot Budget Terms --
+
+    if plot_out == 1
+        plot_budget_terms(file, folder, nam, output, i)
+    end
+
+    %% -- Compute and plot LWP --
+
+    if plot_out == 2
+        plot_lwp(file, folder, nam, output, i)
+    end
+
+    %% -- Compute and plot 1D profiles --
+
+    cold_pools = ["Large Domain, NOCP", "Large Domain, CP"];
+    folders = ["./data/large_domain/NOCP_OUT/", "./data/large_domain/CP_OUT/"];
+
+    if plot_out == 3
+        for j = 1:size(folders, 2) % Loop over the profile data
+            % Import the data from folder 
+            files_all = dir(strcat(folders(j), 'wrfout*'));
+            fprintf('Filename: %s\n', files_all(i).name);
+            file = files_all(i).name;
+
+            cp = cold_pools(j);
+            fname=strcat(folders(j),file);
+            [Z, U(j,:),TH(j,:), QT(j,:), QC(j,:), TKE(j,:), TKE_HOR(j,:), ...
+                TKE_W(j,:), LWP(j,:)] = oned_profiles(fname, nam);
+        end
+
+        params = {U, TH, QT, QC, TKE, TKE_HOR, LWP, Z};
+        xlabels = {"u (ms^{-1})", "\theta (K)", "q_t (gkg^{-1})", "q_c (gkg^{-1})", ...
+            "TKE (m^2s^{-2})", "1/2(u'^2+v'^2) (m^2s^{-2})", "1/2(w'^2) (m^2s^{-2})", ...
+            "kgm^{-2}"};
+        legendLabels = {'CP', 'NO CP'};
+        time = i*nam.dt;
+        plot_1d_profs(params, xlabels, legendLabels, time)
     end
 
 
-%     catch
-%         fprintf('File %s failed\n',file)
-%     end
+    %% -- Plot out the vertical structure --
+    %
+    if plot_out == 4  % Output the vertical structures
+        figure()
+        for j = 1:size(folders, 2)
 
+            % Get a list of all files in the current directory
+            files_all = dir(strcat(folders(j), 'wrfout*'));
+            file = files_all(i).name;
+            fname=strcat(folder,file);
 
+            % Preallocate arrays
+            nam.levs = size(ncread(strcat(folders(j),file),'U'), 3);
+            Z = zeros(2, nam.levs);
+            P = zeros(2, nam.levs);
+            H = zeros(2, nam.levs);
+
+            % Import the data
+            cp = cold_pools(j);
+            fname=strcat(folders(j),file);
+            [Z(j, :), P(j,:), H(j,:)] = vert_struct(fname, nam);
+
+            % Plot the vertical structure
+            subplot(1, 2, j)
+            plot(P(j,:)/10^5, Z(j,:)/10^3, '-o', 'LineWidth', 2); grid on;
+            xlabel('P [bar]')
+            ylabel('z [km]')
+            set(gca, 'XScale', 'log')
+            set(gca, 'XDir','reverse')
+            ylim([0, 4])
+            title(cold_pools(j))
+
+        end
+    end
+
+    %     catch
+    %         fprintf('File %s failed\n',file)
+    %     end
 end
-%%
+
+
+
 

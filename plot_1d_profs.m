@@ -8,16 +8,16 @@ function plot_1d_profs(params, xlabels, legendLabels, time)
 
     xlimits = zeros(8, 2);
     xlimits(1,:) = [-2, 2];
-    xlimits(2,:) = [280, 420];
-    xlimits(3,:) = [0, 0.2];
-    xlimits(4,:) = [0, 10^-4];
-    xlimits(5,:) = [0, 0.5];
+    xlimits(2,:) = [290, 320];
+    xlimits(3,:) = [0.005, 0.02];
+    xlimits(4,:) = [0, 0.2*10^-4];
+    xlimits(5,:) = [0, 0.2];
     xlimits(6,:) = [0, 1];
-    xlimits(7,:) = [0, 10^-15];
+    xlimits(7,:) = [0, 0.2*10^-15];
     xlimits(8,:) = [-10^-14, 10^-14];
 
 
-    ylimits = [0,7];
+    ylimits = [0,4];
 
     for i = 1:8
         subplot(2,4,i);

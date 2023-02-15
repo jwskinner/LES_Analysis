@@ -1,4 +1,4 @@
-function [Z, U,TH, QT, QC, TKE, TKE_HOR, TKE_W, WAT_FLUX] = oned_profiles(fname, nam)
+function [Z, U, TH, QT, QC, TKE, TKE_HOR, TKE_W, LWP] = oned_profiles(fname, nam)
 
 %% ========================================================================
 % read all relevant 3-D variables
@@ -82,6 +82,6 @@ rho=p./(nam.R*tv);                                                         % den
 RHO=mean(reshape(thil,nm,l));
 qtrho = qt.*rho;
 
-%LWP = trapz(Z',qtrho,3);                                                   % vertically integrated LWP
+LWP = mean(reshape(qtrho,nm,l));                                           % LWP in height Z. 
 
 
