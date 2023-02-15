@@ -1,4 +1,4 @@
-function plot_1d_profs(params, xlabels, legendLabels, time) 
+function plot_1d_profs(params, xlabels, titles, legendLabels, time) 
     %% plots the vertical 1d profiles in format (Z, params, data...)
 
     scrsz = get(0,'ScreenSize');
@@ -13,8 +13,8 @@ function plot_1d_profs(params, xlabels, legendLabels, time)
     xlimits(4,:) = [0, 0.2*10^-4];
     xlimits(5,:) = [0, 0.2];
     xlimits(6,:) = [0, 1];
-    xlimits(7,:) = [0, 0.2*10^-15];
-    xlimits(8,:) = [-10^-14, 10^-14];
+    xlimits(7,:) = [0, 10^-16];
+    xlimits(8,:) = [0, 0.02];
 
 
     ylimits = [0,4];
@@ -25,9 +25,10 @@ function plot_1d_profs(params, xlabels, legendLabels, time)
             P(i) = plot(params{i}(j,:), Z/10^3, 'LineWidth', 2); ...
                 hold on; grid on;
         end
-        legend(legendLabels, 'Location', 'northeast')
+        legend(legendLabels, 'Location', 'best')
         xlabel(xlabels{i})
         ylabel('Height [km]')
+        title(titles{i})
         xlim([xlimits(i,1), xlimits(i,2)])
         ylim(ylimits)
     end

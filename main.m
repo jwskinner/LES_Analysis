@@ -86,13 +86,15 @@ for i = 4:4 %length(files_all)
                 TKE_W(j,:), LWP(j,:)] = oned_profiles(fname, nam);
         end
 
-        params = {U, TH, QT, QC, TKE, TKE_HOR, LWP, Z};
+        params = {U, TH, QT, QC, TKE, TKE_HOR, TKE_W, LWP, Z};
         xlabels = {"u (ms^{-1})", "\theta (K)", "q_t (gkg^{-1})", "q_c (gkg^{-1})", ...
             "TKE (m^2s^{-2})", "1/2(u'^2+v'^2) (m^2s^{-2})", "1/2(w'^2) (m^2s^{-2})", ...
             "kgm^{-2}"};
+        titles = {"U", "TH", "QT", "QC", "TKE", "TKE HOR", "TKE W", "LWP"}; 
         legendLabels = {'CP', 'NO CP'};
         time = i*nam.dt;
-        plot_1d_profs(params, xlabels, legendLabels, time)
+        %%
+        plot_1d_profs(params, xlabels, titles, legendLabels, time)
     end
 
 

@@ -76,7 +76,7 @@ TKE_hor = 0.5*(upert.^2 + vpert.^2);
 TKE_HOR=mean(reshape(TKE_hor,nm,l));
 TKE_W = 0.5*mean(reshape(wpert,nm,l)).^2;
 
-WAT_FLUX = (mean(reshape(wpert,nm,l)).*mean(reshape(qtpert,nm,l)));        % Total water flux 
+%WAT_FLUX = (mean(reshape(wpert,nm,l)).*mean(reshape(qtpert,nm,l)));        % Total water flux 
 
 rho=p./(nam.R*tv);                                                         % density
 RHO=mean(reshape(thil,nm,l));
