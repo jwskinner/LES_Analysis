@@ -6,13 +6,19 @@
 
 clear variables
 
-txt = 'NOCP';
-folder = './data/large_domain/CP_OUT/' %'/scratch/05999/mkurowsk/ocean_nocp/' on TACC;
+scratch = "/scratch/05999/mkurowsk/";  % or './' for jacks laptop
+
+%folders = ["./data/small_domain/NOCP_OUT/", "./data/small_domain/CP_OUT/"];
+folders = ["ocean_nocp.512/", "ocean_nocp.1000/", "ocean_nocp/"]; 
+ 
+
+% Takes the first folder for loading in params. 
+folder = strcat(scratch, folders(1));  %'./data/large_domain/CP_OUT/' %'/scratch/05999/mkurowsk/ocean_nocp/' on TACC;
 output = './plots/';
 
 % Returns a list of all files in the folder
 files_all = dir(strcat(folder, 'wrfout*'));
-sample_file = strcat(folder,files_all(1).name);                            % File for loading in all the sim parameters
+sample_file = strcat(folder,files_all(1).name);                            % File for loading in all the numerical parameters of the simulation
 
 % Setup physical and numerical constants
 nam.R=287.04;                                                              % [J/kg/K]
@@ -24,7 +30,6 @@ nam.T0=300;                                                                % ncr
 nam.P0=1.e5;                                                               % ncread(fname,'P00'); % base state pressure [Pa]
 nam.dx=double(ncreadatt(sample_file,'/','DX'));                            % [m]
 nam.dy=double(ncreadatt(sample_file,'/','DY'));                            % [m]
-nam.txt = txt;                                                             % A label for the data
 nam.dt = 2.0;                                                              % Output frequency [hours]
 nam.levs = size(ncread(sample_file,'U'), 3);                               % Number of vertical levels in the simulation
 nam.nx = size(ncread(sample_file,'U'), 1);                                 % Number of x grid points in simulation
@@ -34,16 +39,17 @@ nam.ny = size(ncread(sample_file,'U'), 2);                                 % Num
 plot_out = 3;  % 0: Fields, 1: Budgets, 2:LWP, 3:1D profiles, 4: Vertical Structure
 
 % For creating movies frame by frame
-for i = 20:20 %length(files_all)
+for i = 18:18 %length(files_all)
 
+    file = files_all(i).name;
+    fname=strcat(folder,file);
 
     %% -- Compute and plot files frame by frame into a movie --
     if plot_out == 0
 
         % Sets up the paramters for the plotting
         fprintf('Filename: %s\n', files_all(i).name);
-        file = files_all(i).name;
-        fname=strcat(folder,file);
+  
         params.time = (i-1)*nam.dt;
         params.name = file;
         params.save_folder = append(output, variable.Name, '/');
@@ -60,20 +66,22 @@ for i = 20:20 %length(files_all)
 
     %% -- Plot Budget Terms --
 
-    if plot_out == 1
-        plot_budget_terms(file, folder, nam, output, i)
+    if plot_out == 1 
+        plot_budget_terms(fname, nam, params)
     end
 
     %% -- Compute and plot LWP --
 
     if plot_out == 2
-        plot_lwp(file, folder, nam, output, i)
+        params.output = output; 
+        params.index = i; 
+        params.export = 'mov';                                             % export as 'frames' or 'movie'.
+        plot_lwp(file, folder, nam, params)
     end
 
     %% -- Compute and Plot Vertical Profiles --
 
     % Specify datasets to import, can be any number of folders
-    folders = ["./data/small_domain/NOCP_OUT/", "./data/small_domain/CP_OUT/"];
 
     if plot_out == 3
 
@@ -81,10 +89,10 @@ for i = 20:20 %length(files_all)
         for j = 1:size(folders, 2)
 
             % Import the data from currently selected folder
-            files_all = dir(strcat(folders(j), 'wrfout*'));
+            files_all = dir(strcat(scratch,folders(j),'wrfout*'));
             fprintf('Filename: %s\n', files_all(i).name);
             file = files_all(i).name;
-            fname=strcat(folders(j),file);
+            fname=strcat(scratch,folders(j),file);
 
             % Call the 1D profiles script to compute the profiles
             [Z, U(j,:),TH(j,:), QT(j,:), QC(j,:), TKE(j,:), TKE_HOR(j,:), ...
@@ -101,11 +109,11 @@ for i = 20:20 %length(files_all)
         titles = {"U", "TH", "TEMP", "QT", "QC", "TKE", "TKE HOR", ...
             "TOTAL WATER"};
 
-        legendLabels = {'CP', 'NO CP'};
+        legendLabels = {'50 [m]', '100 [m]', '200 [m]'};
 
         time = i*nam.dt;
 
-        % Plot the vertical profiles with lines for each dataset
+        %% Plot the vertical profiles with lines for each dataset
         plot_1d_profs(params, xlabels, titles, legendLabels, time)
     end
 

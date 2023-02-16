@@ -1,8 +1,12 @@
 function plot_1d_profs(params, xlabels, titles, legendLabels, time) 
     %% plots the vertical 1d profiles in format (Z, params, data...)
 
-    scrsz = get(0,'ScreenSize');
-    figure('Position', [0 0 scrsz(3)*0.9 scrsz(3)*0.9]);
+    % Can set the screensize to keep figs consistent but doesn't work on
+    % TACC
+%     scrsz = get(0,'ScreenSize');
+%     figure('Position', [0 0 scrsz(3)*0.9 scrsz(3)*0.9]);
+
+    figure() 
 
     Z = params{size(params,2)};
 
@@ -17,7 +21,7 @@ function plot_1d_profs(params, xlabels, titles, legendLabels, time)
     xlimits(8,:) = [0, 10^7];
 
 
-    ylimits = [0,4];
+    ylimits = [0,18];
 
     for i = 1:8
         subplot(2,4,i);

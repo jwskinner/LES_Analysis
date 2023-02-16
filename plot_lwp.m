@@ -1,13 +1,18 @@
-% Plots vertically integrated LWP on the 2 x 2 grid 
+% Plots vertically integrated LWP on the 2 x 2 grid
 
-function [outputArg1,outputArg2] = plot_budget_terms(file, folder, nam, output, i)
+function [outputArg1,outputArg2] = plot_lwp(file, folder, nam, params)
 
-fname=strcat(folder,file);
+% Load in the plot paramters 
+output = params.output;
+i = params.index;
+export = params.export;
+
+fname = strcat(folder, file); 
 
 %% ========================================================================
 % read all relevant 3-D variables
 
-time = nam.dt * i;                                                         % Time hours 
+time = nam.dt * i;                                                         % Time [hours]
 
 ph =ncread(fname,'PH' );                                                   % geopotential perturbation [m2/s2]
 phb=ncread(fname,'PHB');                                                   % base geopotential [m2/s2)
@@ -20,20 +25,19 @@ qc=ncread(fname,'QCLOUD');                                                 % Clo
 %qr=ncread(fname,'QRAIN');                                                 % Rain water mixing ratio [kg/kg]
 qi=ncread(fname,'QICE');                                                   % Ice mixing ratio [kg/kg]
 
-%% 
+%%
 
 %% ========================================================================
 % initial calculations
 
 s=size(th);
-n=s(1); 
-m=s(2); 
-l=s(3); 
+n=s(1);
+m=s(2);
+l=s(3);
 nm=n*m;
 
-HS=mean(reshape(ph+phb,nm,l+1));                                            
-H=0.5*(HS(:,1:end-1)+HS(:,2:end));                                         % Jack flipped the indexing to get the half values here 
-
+HS=mean(reshape(ph+phb,nm,l+1));
+H=0.5*(HS(:,1:end-1)+HS(:,2:end));
 Z=H./nam.g';                                                               % height at mass-levels [m]
 p=p+pb;                                                                    % pressure
 exn=(p/nam.P0).^(nam.R/nam.cp);                                            % exner function
@@ -47,8 +51,8 @@ qtrho = qt.*rho;
 
 LWP = trapz(Z',qtrho,3);                                                   % vertically integrated LWP
 
- 
-%% Plot Liquid Water Path 
+
+%% Plot Liquid Water Path
 
 % Get the screen size
 scrsz = get(0,'ScreenSize');
@@ -66,7 +70,7 @@ xlabel('x [km]','LineWidth',1,'FontSize',14);
 title(num2str(time,'%.1f')+" hours")
 
 
-colormap = cmocean('ice');
+% colormap = cmocean('ice'); % can put in a nicer colourmap later
 cbar = colorbar;
 xlim([min(x_km) max(x_km)])
 ylim([min(y_km) max(y_km)])
@@ -81,12 +85,11 @@ set(axes1,'CLim',[40 60],'ColorScale','log','Colormap',...
 colorbar(axes1,'Limits',[0 100]);
 
 f = gcf;
-export = 'mov'; 
 
-if strcmp('frames',export) 
+if strcmp('frames',export)
     exportgraphics(f,strcat(output, 'LWP/', file, '_', nam.txt, '.png'),'Resolution',150)
 else
-     exportgraphics(f,strcat(output, 'LWP/', 'movie', '.gif'),'Resolution',150, 'Append',true)
-end 
+    exportgraphics(f,strcat(output, 'LWP/', 'movie', '.gif'),'Resolution',150, 'Append',true)
+end
 
 end
