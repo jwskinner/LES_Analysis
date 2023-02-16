@@ -21,7 +21,7 @@ function plot_1d_profs(params, xlabels, titles, legendLabels, time)
     xlimits(8,:) = [0, 10^7];
 
 
-    ylimits = [0,18];
+    ylimits = [0,6];
 
     for i = 1:8
         subplot(2,4,i);

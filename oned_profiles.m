@@ -96,12 +96,14 @@ rho=p./(nam.R*tv);                                                         % den
 RHO=mean(reshape(thil,nm,l));
 qtrho = qt.*rho;
 
-% Rough calculation of total water from air mass and total water mixing
-% ratio
-% (double check this)
+% Calculation of total water from air mass and total water mixing
+% ratio. 
+% q_t = mass_w / mass_air  (density water vapour / air density)
+% q_t = mass_w / (rho*V)
+% mass_w = q_t *(rho*V) 
+
 v_air = (nam.dx * nam.dy * (max(Z)/nam.levs));                             % Volume of each grid box [m^3]
 M_AIR = RHO .* v_air;
-
-TOT_WAT = (M_AIR .* QT) ./ (1 + QT);                                       % Total water [Kg] (Jack double check this)
+TOT_WAT = (M_AIR .* QT);                                                   % Total water [Kg]
 
 

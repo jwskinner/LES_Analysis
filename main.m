@@ -6,10 +6,11 @@
 
 clear variables
 
-scratch = "/scratch/05999/mkurowsk/";  % or './' for jacks laptop
+%scratch = "/scratch/05999/mkurowsk/"; % For Tacc 
+scratch = "./data/"; % For jacks laptop
 
-%folders = ["./data/small_domain/NOCP_OUT/", "./data/small_domain/CP_OUT/"];
-folders = ["ocean_nocp.512/", "ocean_nocp.1000/", "ocean_nocp/"]; 
+folders = ["./large_domain/NOCP_OUT/", "./large_domain/CP_OUT/"];
+%folders = ["ocean_nocp.512/", "ocean_nocp.1000/", "ocean_nocp/"]; 
  
 
 % Takes the first folder for loading in params. 
@@ -39,7 +40,7 @@ nam.ny = size(ncread(sample_file,'U'), 2);                                 % Num
 plot_out = 3;  % 0: Fields, 1: Budgets, 2:LWP, 3:1D profiles, 4: Vertical Structure
 
 % For creating movies frame by frame
-for i = 18:18 %length(files_all)
+for i = 7:7 %length(files_all)
 
     file = files_all(i).name;
     fname=strcat(folder,file);
@@ -81,8 +82,6 @@ for i = 18:18 %length(files_all)
 
     %% -- Compute and Plot Vertical Profiles --
 
-    % Specify datasets to import, can be any number of folders
-
     if plot_out == 3
 
         % Loops over the selected folders, one line for each dataset
@@ -104,14 +103,14 @@ for i = 18:18 %length(files_all)
         
         xlabels = {"u (ms^{-1})", "\theta (K)", "T (K)", "q_t (kg/kg)", ...
             "q_c (kg/kg)", "TKE (m^2s^{-2})", ...
-            "1/2(u'^2+v'^2) (m^2s^{-2})", "tot_{wat}[kg]"};
+            "1/2(u'^2+v'^2) (m^2s^{-2})", "T_{water}[kg]"};
 
         titles = {"U", "TH", "TEMP", "QT", "QC", "TKE", "TKE HOR", ...
             "TOTAL WATER"};
 
-        legendLabels = {'50 [m]', '100 [m]', '200 [m]'};
+        legendLabels = {"CP", "NOCP"};
 
-        time = i*nam.dt;
+        time = (i-1)*nam.dt;
 
         %% Plot the vertical profiles with lines for each dataset
         plot_1d_profs(params, xlabels, titles, legendLabels, time)
