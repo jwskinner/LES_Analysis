@@ -4,15 +4,13 @@ function [outputArg1,outputArg2] = plot_lwp(file, folder, nam, params)
 
 % Load in the plot paramters 
 output = params.output;
-i = params.index;
 export = params.export;
+time = params.time;                                                        % Time [hours]
 
 fname = strcat(folder, file); 
 
 %% ========================================================================
 % read all relevant 3-D variables
-
-time = nam.dt * i;                                                         % Time [hours]
 
 ph =ncread(fname,'PH' );                                                   % geopotential perturbation [m2/s2]
 phb=ncread(fname,'PHB');                                                   % base geopotential [m2/s2)

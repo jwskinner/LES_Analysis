@@ -9,7 +9,7 @@ clear variables
 %scratch = "/scratch/05999/mkurowsk/"; % For Tacc 
 scratch = "./data/"; % For jacks laptop
 
-folders = ["./large_domain/NOCP_OUT/", "./large_domain/CP_OUT/"];
+folders = ["./large_domain/CP_OUT/", "./large_domain/CP_OUT/"];
 %folders = ["ocean_nocp.512/", "ocean_nocp.1000/", "ocean_nocp/"]; 
  
 
@@ -37,7 +37,7 @@ nam.nx = size(ncread(sample_file,'U'), 1);                                 % Num
 nam.ny = size(ncread(sample_file,'U'), 2);                                 % Number of y grid points in simulation
 
 % Plot diagnostic
-plot_out = 3;  % 0: Fields, 1: Budgets, 2:LWP, 3:1D profiles, 4: Vertical Structure
+plot_out = 2;  % 0: Fields, 1: Budgets, 2:LWP, 3:1D profiles, 4: Vertical Structure
 
 % For creating movies frame by frame
 for i = 7:7 %length(files_all)
@@ -45,13 +45,15 @@ for i = 7:7 %length(files_all)
     file = files_all(i).name;
     fname=strcat(folder,file);
 
+    time = (i-1)*nam.dt
+
     %% -- Compute and plot files frame by frame into a movie --
     if plot_out == 0
 
         % Sets up the paramters for the plotting
         fprintf('Filename: %s\n', files_all(i).name);
   
-        params.time = (i-1)*nam.dt;
+        params.time = time;
         params.name = file;
         params.save_folder = append(output, variable.Name, '/');
 
@@ -75,7 +77,7 @@ for i = 7:7 %length(files_all)
 
     if plot_out == 2
         params.output = output; 
-        params.index = i; 
+        params.time = time;     
         params.export = 'mov';                                             % export as 'frames' or 'movie'.
         plot_lwp(file, folder, nam, params)
     end
@@ -109,8 +111,6 @@ for i = 7:7 %length(files_all)
             "TOTAL WATER"};
 
         legendLabels = {"CP", "NOCP"};
-
-        time = (i-1)*nam.dt;
 
         %% Plot the vertical profiles with lines for each dataset
         plot_1d_profs(params, xlabels, titles, legendLabels, time)
