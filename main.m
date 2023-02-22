@@ -6,11 +6,12 @@
 
 clear variables
 
-%scratch = "/scratch/05999/mkurowsk/"; % For Tacc 
-scratch = "./data/"; % For jacks laptop
+scratch = "/scratch/05999/mkurowsk/"; % For Tacc 
+%scratch = "./data/"; % For jacks laptop
 
-folders = ["./large_domain/CP_OUT/", "./large_domain/CP_OUT/"];
-%folders = ["ocean_nocp.512/", "ocean_nocp.1000/", "ocean_nocp/"]; 
+%folders = ["./large_domain/CP_OUT/", "./large_domain/CP_OUT/"];
+%folders = ["ocean_cp/", "ocean_nocp.1000/", "ocean_nocp/"]; 
+folders = ["ocean_cp.512/", "GATE_NOCP_CONSTFLX/"]
  
 
 % Takes the first folder for loading in params. 
@@ -31,27 +32,28 @@ nam.T0=300;                                                                % ncr
 nam.P0=1.e5;                                                               % ncread(fname,'P00'); % base state pressure [Pa]
 nam.dx=double(ncreadatt(sample_file,'/','DX'));                            % [m]
 nam.dy=double(ncreadatt(sample_file,'/','DY'));                            % [m]
-nam.dt = 2.0;                                                              % Output frequency [hours]
+nam.dt = 0.5;                                                              % Output frequency [hours]
 nam.levs = size(ncread(sample_file,'U'), 3);                               % Number of vertical levels in the simulation
 nam.nx = size(ncread(sample_file,'U'), 1);                                 % Number of x grid points in simulation
 nam.ny = size(ncread(sample_file,'U'), 2);                                 % Number of y grid points in simulation
+nam.txt = 'CP'
 
 % Plot diagnostic
-plot_out = 2;  % 0: Fields, 1: Budgets, 2:LWP, 3:1D profiles, 4: Vertical Structure
+plot_out = 1;  % 0: Fields, 1: Budgets, 2:LWP, 3:1D profiles, 4: Vertical Structure
 
 % For creating movies frame by frame
-for i = 7:7 %length(files_all)
+for i = 40:40 %length(files_all)
 
     file = files_all(i).name;
     fname=strcat(folder,file);
 
-    time = (i-1)*nam.dt
+    % Sets up the paramters for the plotting
+    fprintf('Filename: %s\n', files_all(i).name);
+
+    time = (i-1)*nam.dt; 
 
     %% -- Compute and plot files frame by frame into a movie --
     if plot_out == 0
-
-        % Sets up the paramters for the plotting
-        fprintf('Filename: %s\n', files_all(i).name);
   
         params.time = time;
         params.name = file;
@@ -70,7 +72,7 @@ for i = 7:7 %length(files_all)
     %% -- Plot Budget Terms --
 
     if plot_out == 1 
-        plot_budget_terms(fname, nam, params)
+        plot_budget_terms(file, folder, nam, output, i)
     end
 
     %% -- Compute and plot LWP --
@@ -110,7 +112,7 @@ for i = 7:7 %length(files_all)
         titles = {"U", "TH", "TEMP", "QT", "QC", "TKE", "TKE HOR", ...
             "TOTAL WATER"};
 
-        legendLabels = {"CP", "NOCP"};
+        legendLabels = {"ocean nocp", "GATE NOCP CONSTFLX"};
 
         %% Plot the vertical profiles with lines for each dataset
         plot_1d_profs(params, xlabels, titles, legendLabels, time)

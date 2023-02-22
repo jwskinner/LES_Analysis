@@ -19,8 +19,6 @@ function plot_1d_profs(params, xlabels, titles, legendLabels, time)
     xlimits(6,:) = [0, 0.2];
     xlimits(7,:) = [0, 1];
     xlimits(8,:) = [0, 10^7];
-    
-    num2string(time)
 
     ylimits = [0,6];
 

@@ -7,6 +7,8 @@ time = nam.dt * i;
 
 [u, v, w] = loadNetCDF(fname, 'U', 'V', 'W'); 
 
+u = u.Data; v = v.Data; w = w.Data; 
+
 u=0.5*(u(1:end-1,:,:,:)+u(2:end,:,:,:)); %C->A grid
 v=0.5*(v(:,1:end-1,:,:)+v(:,2:end,:,:)); 
 w=0.5*(w(:,:,1:end-1,:)+w(:,:,2:end,:));
