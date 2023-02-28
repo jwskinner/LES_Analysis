@@ -29,5 +29,9 @@ tv=t.*(1+0.608*qv);                                                        % vir
 rho=p./(nam.R*tv);                                                         % density
 
 qtrho = qt.*rho;                                                           % LWP 
+
+LWP = trapz(Z',qtrho,3);                                                   % vertically integrated LWP
+
+MLWP = mean(LWP); 
         
 end
