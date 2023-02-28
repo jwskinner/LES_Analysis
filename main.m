@@ -11,7 +11,7 @@ scratch = "/scratch/05999/mkurowsk/"; % For Tacc
 
 %folders = ["./large_domain/CP_OUT/", "./large_domain/CP_OUT/"];
 %folders = ["ocean_cp/", "ocean_nocp.1000/", "ocean_nocp/"]; 
-folders = ["ocean_cp.512/", "GATE_NOCP_CONSTFLX/"]
+folders = ["GATE_CP_CONSTFLX/", "GATE_NOCP_CONSTFLX/"]
  
 
 % Takes the first folder for loading in params. 
@@ -36,13 +36,13 @@ nam.dt = 0.5;                                                              % Out
 nam.levs = size(ncread(sample_file,'U'), 3);                               % Number of vertical levels in the simulation
 nam.nx = size(ncread(sample_file,'U'), 1);                                 % Number of x grid points in simulation
 nam.ny = size(ncread(sample_file,'U'), 2);                                 % Number of y grid points in simulation
-nam.txt = 'CP'
+nam.txt = 'NOCP';
 
 % Plot diagnostic
-plot_out = 1;  % 0: Fields, 1: Budgets, 2:LWP, 3:1D profiles, 4: Vertical Structure
+plot_out = 3;  % 0: Fields, 1: Budgets, 2:LWP, 3:1D profiles, 4: Vertical Structure
 
 % For creating movies frame by frame
-for i = 40:40 %length(files_all)
+for i = 61:61 %length(files_all)
 
     file = files_all(i).name;
     fname=strcat(folder,file);
@@ -105,14 +105,14 @@ for i = 40:40 %length(files_all)
         % Setup the plots for the profiles
         params = {U, TH,TEMP, QT, QC, TKE, TKE_HOR, TOT_WAT, Z};
         
-        xlabels = {"u (ms^{-1})", "\theta (K)", "T (K)", "q_t (kg/kg)", ...
-            "q_c (kg/kg)", "TKE (m^2s^{-2})", ...
+        xlabels = {"u (ms^{-1})", "\theta (K)", "T (K)", "q_t (g/kg)", ...
+            "q_c (g/kg)", "TKE (m^2s^{-2})", ...
             "1/2(u'^2+v'^2) (m^2s^{-2})", "T_{water}[kg]"};
 
         titles = {"U", "TH", "TEMP", "QT", "QC", "TKE", "TKE HOR", ...
             "TOTAL WATER"};
 
-        legendLabels = {"ocean nocp", "GATE NOCP CONSTFLX"};
+        legendLabels = {"CP", "NOCP"};
 
         %% Plot the vertical profiles with lines for each dataset
         plot_1d_profs(params, xlabels, titles, legendLabels, time)

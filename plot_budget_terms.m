@@ -198,7 +198,7 @@ ylabel('Height [km]','LineWidth',1.5,'FontSize',15)
 legend('PROD','TRNS','SRCS','DISS','residual');
 title(['q_t variance budget, ', nam.txt], 'FontSize',12); hold off;
 xlim([-1e-3 1e-3])
-%ylim([0 5])
+ylim([0 10])
 set(subplot1,'FontSize',11,'LineWidth',1);
  
 subplot2 = subplot(1,2,2)
@@ -210,9 +210,9 @@ plot(thilvar.diss+thilvar.srcs+thilvar.trns'+thilvar.prod,Z/10^3, '--black', 'Li
 ylabel('Height [km]','LineWidth',1.5,'FontSize',15)
 legend('PROD','TRNS','SRCS','DISS','residual');
 title(['\theta_{l} variance budget, ', nam.txt], 'FontSize',12)
-xlim([-5e-3 5e-3])
-xticks([-5e-3, -2.5e-3, 0, 2.5e-3, 5e-3])
-%ylim([0 5])
+xlim([-2.5e-3 2.5e-3])
+%xticks([2.5e-3, 0, 2.5e-3])
+ylim([0 10])
 set(subplot2,'FontSize',11,'LineWidth',1);
 
 sgtitle(num2str(time,'%.1f')+" hours")
