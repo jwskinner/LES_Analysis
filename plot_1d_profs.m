@@ -6,7 +6,9 @@ function plot_1d_profs(params, xlabels, titles, legendLabels, time)
 %     scrsz = get(0,'ScreenSize');
 %     figure('Position', [0 0 scrsz(3)*0.9 scrsz(3)*0.9]);
 
-    figure() 
+    %figure()
+    % figure for printing (keeps consistent sizing)
+    figure('Renderer', 'painters', 'Position', [10 10 900 600])
 
     Z = params{size(params,2)};
 
@@ -31,7 +33,7 @@ function plot_1d_profs(params, xlabels, titles, legendLabels, time)
         legend(legendLabels, 'Location', 'best')
         xlabel(xlabels{i})
         ylabel('Height [km]')
-        title(titles{i})
+        title(titles{i},'FontWeight','Normal')
         xlim([xlimits(i,1), xlimits(i,2)])
         ylim(ylimits)
     end

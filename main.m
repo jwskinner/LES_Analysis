@@ -6,12 +6,12 @@
 
 clear variables
 
-scratch = "/scratch/05999/mkurowsk/"; % For Tacc 
-%scratch = "./data/"; % For jacks laptop
+%scratch = "/scratch/05999/mkurowsk/"; % For Tacc 
+scratch = "./data/"; % For jacks laptop
 
-%folders = ["./large_domain/CP_OUT/", "./large_domain/CP_OUT/"];
+folders = ["./large_domain/CP_OUT/", "./large_domain/NOCP_OUT/"];
 %folders = ["ocean_cp/", "ocean_nocp.1000/", "ocean_nocp/"]; 
-folders = ["GATE_CP_CONSTFLX/", "GATE_NOCP_CONSTFLX/"]
+%folders = ["GATE_CP_CONSTFLX/", "GATE_NOCP_CONSTFLX/"]
  
 
 % Takes the first folder for loading in params. 
@@ -42,7 +42,7 @@ nam.txt = 'NOCP';
 plot_out = 3;  % 0: Fields, 1: Budgets, 2:LWP, 3:1D profiles, 4: Vertical Structure
 
 % For creating movies frame by frame
-for i = 61:61 %length(files_all)
+for i = 16:16 %length(files_all)
 
     file = files_all(i).name;
     fname=strcat(folder,file);
@@ -108,9 +108,9 @@ for i = 61:61 %length(files_all)
         xlabels = {"u (ms^{-1})", "\theta (K)", "T (K)", "q_t (g/kg)", ...
             "q_c (g/kg)", "TKE (m^2s^{-2})", ...
             "1/2(u'^2+v'^2) (m^2s^{-2})", "T_{water}[kg]"};
-
-        titles = {"U", "TH", "TEMP", "QT", "QC", "TKE", "TKE HOR", ...
-            "TOTAL WATER"};
+        
+        titles = {"U", "Potential Temp.", "Temp.", "q_t", "q_c", "TKE", "TKE Hor.", ...
+            "Total Water"};
 
         legendLabels = {"CP", "NOCP"};
 
