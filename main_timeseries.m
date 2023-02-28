@@ -16,7 +16,7 @@ nam.dt = 4.0;                   % Output frequency in hours
 
 % Define the folders for each case
 % cold_pools = ["./data/large_domain/CP_OUT/", "./data/large_domain/NOCP_OUT/"];
-cold_pools = ["'/scratch/05999/mkurowsk/ocean_nocp/", "/scratch/05999/mkurowsk/ocean_cp/"]
+cold_pools = ["/scratch/05999/mkurowsk/GATE_CP_CONSTFLX/", "/scratch/05999/mkurowsk/GATE_NOCP_CONSTFLX/"]
 
 % Get a list of all files in each folder
 files_cp = dir(strcat(cold_pools{1}, 'wrfout*'));
@@ -26,7 +26,7 @@ files_all = files_cp; % choose the folder with shortest output
 
 % Preallocate arrays for storing the computed values; index 1 is for CP or
 % NOCP
-num_files = 20 %length(files_nocp);
+num_files = 66; %length(files_nocp);
 TKE_out = zeros(2, num_files);
 LWP_out = zeros(2, num_files);
 RAINNC_out = zeros(2, num_files);
@@ -50,7 +50,7 @@ for i = 1:num_files
     parfor j = 1:2
 
         cp = cold_pools(j);
-        try 
+%         try 
         fprintf('Filename: %s\n', files_all(i).name);
 
         file = files_all(i).name;
@@ -62,7 +62,7 @@ for i = 1:num_files
 
         s=size(tke.Data); n=s(1); m=s(2); l=s(3); nm=n*m;
         TKE = mean(reshape(tke.Data,nm,l));                                % TKE
-        LWP = mean_LWP(fname, nam);                                        % LWP
+        LWP = comp_LWP(fname, nam);                                        % LWP
 %         CLDFR = mean(reshape(cldfr.Data,nm,l));
 
 
@@ -70,7 +70,7 @@ for i = 1:num_files
         RAINNC_out(j, i) = mean(rainnc.Data, 'all');
 %         PRECR_out(j, i) = mean(precr.Data, 'all');
 %         PRECG_out(j, i) = mean(precg.Data, 'all');
-        LWP_out(j, i) = trapz(Z,LWP);
+        LWP_out(j, i) = mean(LWP, 'all');
 %         CLDFR_out(j, i) = trapz(Z,CLDFR);
 
         HFX_out(j, i) = mean(hfx.Data, 'all');
@@ -86,15 +86,15 @@ for i = 1:num_files
 %         plot(TPC_out(1, :), 'Linewidth', 1.5); hold on;
 %         plot(TPC_out(2, :), 'Linewidth', 1.5); hold on;
 
-        catch
-        TKE_out(j, i) = -1;
-        RAINNC_out(j, i) = -1;
-        LWP_out(j, i) = -1;
-        HFX_out(j, i) = -1;
-        QFX_out(j, i) = -1;
-        LH_out(j, i) = -1;
-        fprintf('File %s failed\n',file)
-        end
+%         catch
+%         TKE_out(j, i) = -1;
+%         RAINNC_out(j, i) = -1;
+%         LWP_out(j, i) = -1;
+%         HFX_out(j, i) = -1;
+%         QFX_out(j, i) = -1;
+%         LH_out(j, i) = -1;
+%         fprintf('File %s failed\n',file)
+%         end
 
 
     end
@@ -123,14 +123,15 @@ plot(time_hours, LWP_out(2,:), 'Linewidth', 1.5);
 xlabel('Time [hours]','LineWidth',1.5,'FontSize',15);
 ylabel('LWP [kg m^{-2}]','LineWidth',1.5,'FontSize',15);
 legend('CP', 'NOCP', 'Location', 'northwest');
-ylim([50, 100])
+ylim([45, 60])
 title('Vert. integrated LWP', 'LineWidth',1,'FontSize',13, 'FontWeight','Normal');
 
 subplot(2,3,3);
 plot(time_hours, RAINNC_out(1, :), 'Linewidth', 1.5); hold on;
 plot(time_hours, RAINNC_out(2, :), 'Linewidth', 1.5);
 xlabel('Time [hours]','LineWidth',1.5,'FontSize',15);
-ylabel(append('RAINNC', ' [', rainnc.Units, ']'),'LineWidth',1.5,'FontSize',15);
+% ylabel(append('RAINNC', ' [', rainnc.Units, ']'),'LineWidth',1.5,'FontSize',15);
+ylabel(append('RAINNC', ' [mm]'),'LineWidth',1.5,'FontSize',15);
 title('Accumulative precipitation', 'LineWidth',1,'FontSize',13, 'FontWeight','Normal');
 legend('CP', 'NOCP', 'Location', 'northwest')
 
@@ -154,22 +155,22 @@ subplot(2,3,4);
 plot(time_hours, HFX_out(1,:), 'Linewidth', 1.5); hold on;
 plot(time_hours, HFX_out(2,:), 'Linewidth', 1.5);
 xlabel('Time [hours]','LineWidth',1.5,'FontSize',15);
-ylabel(append('HFX', ' [', hfx.Units, ']'),'LineWidth',1.5,'FontSize',15);
-title(hfx.Desc, 'LineWidth',1,'FontSize',13, 'FontWeight','Normal');
+ylabel(append('HFX', ' [Wm^{-2}]'),'LineWidth',1.5,'FontSize',15);
+title('Upward Heat Flux at Surface', 'LineWidth',1,'FontSize',13, 'FontWeight','Normal');
 legend('CP', 'NOCP', 'Location', 'northwest')
 
 subplot(2,3,5);
 plot(time_hours, LH_out(1,:), 'Linewidth', 1.5); hold on;
 plot(time_hours, LH_out(2,:), 'Linewidth', 1.5);
 xlabel('Time [hours]','LineWidth',1.5,'FontSize',15);
-ylabel(append('LH', ' [', lh.Units, ']'),'LineWidth',1.5,'FontSize',15);
-title(lh.Desc, 'LineWidth',1,'FontSize',13, 'FontWeight','Normal');
+ylabel(append('LH', ' [Wm^{-2}]'),'LineWidth',1.5,'FontSize',15);
+title('Latent Heat Flux at Surface', 'LineWidth',1,'FontSize',13, 'FontWeight','Normal');
 legend('CP', 'NOCP', 'Location', 'northwest')
 
 subplot(2,3,6);
 plot(time_hours, QFX_out(1,:), 'Linewidth', 1.5); hold on;
 plot(time_hours, QFX_out(2,:), 'Linewidth', 1.5);
 xlabel('Time [hours]','LineWidth',1.5,'FontSize',15);
-ylabel(append('QFX', ' [', qfx.Units, ']'),'LineWidth',1.5,'FontSize',15);
-title(qfx.Desc, 'LineWidth',1,'FontSize',13, 'FontWeight','Normal');
+ylabel(append('QFX', ' [kg m^{-2} s^{-1}]'),'LineWidth',1.5,'FontSize',15);
+title('Upward Moisture Flux at Surface', 'LineWidth',1,'FontSize',13, 'FontWeight','Normal');
 legend('CP', 'NOCP', 'Location', 'northwest')
