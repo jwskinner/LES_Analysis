@@ -41,7 +41,7 @@ time_hours = zeros(1, num_files);
 [Z, p, H] = vert_struct(strcat(cold_pools(1),files_cp(1).name), nam);
 
 % Loop over the files and cases
-for i = 1:5 %num_files
+for i = 1:num_files
 
     for j = 1:2
 
@@ -62,26 +62,26 @@ for i = 1:5 %num_files
         v=0.5*(v(:,1:end-1,:,:)+v(:,2:end,:,:));
         w=0.5*(w(:,:,1:end-1,:)+w(:,:,2:end,:));
 
-        ph =ncread(fname,'PH' );                                                   % geopotential perturbation [m2/s2]
-        phb=ncread(fname,'PHB');                                                   % base geopotential [m2/s2)
-        tke=ncread(fname,'TKE');                                                   % TKE [m2/s2]
-        p  =ncread(fname,'P'  );                                                   % pressure perturbation [Pa]
-        pb =ncread(fname,'PB' );                                                   % base pressure [Pa]
-        th =ncread(fname,'T'  )+nam.T0;                                            % Potential temperature [K]
+        ph =ncread(fname,'PH' );                                           % geopotential perturbation [m2/s2]
+        phb=ncread(fname,'PHB');                                           % base geopotential [m2/s2]
+        tke=ncread(fname,'TKE');                                           % TKE [m2/s2]
+        p  =ncread(fname,'P'  );                                           % pressure perturbation [Pa]
+        pb =ncread(fname,'PB' );                                           % base pressure [Pa]
+        th =ncread(fname,'T'  )+nam.T0;                                    % Potential temperature [K]
 
-        qv=ncread(fname,'QVAPOR');                                                 % Water vapor mixing ratio [kg/kg]
-        qc=ncread(fname,'QCLOUD');                                                 % Cloud water mixing ratio [kg/kg]
-        qr=ncread(fname,'QRAIN');                                                  % Rain water mixing ratio [kg/kg]
-        qi=ncread(fname,'QICE');                                                   % Ice mixing ratio [kg/kg]
-        qs=ncread(fname,'QSNOW');                                                  % Snow mixing ratio
-        qg=ncread(fname,'QGRAUP');                                                 % Graupel mixing ratio
+        qv=ncread(fname,'QVAPOR');                                         % Water vapor mixing ratio [kg/kg]
+        qc=ncread(fname,'QCLOUD');                                         % Cloud water mixing ratio [kg/kg]
+        qr=ncread(fname,'QRAIN');                                          % Rain water mixing ratio [kg/kg]
+        qi=ncread(fname,'QICE');                                           % Ice mixing ratio [kg/kg]
+        qs=ncread(fname,'QSNOW');                                          % Snow mixing ratio
+        qg=ncread(fname,'QGRAUP');                                         % Graupel mixing ratio
 
-        kh=ncread(fname,'XKHH');                                                   % eddy-diffusivity for scalars [m2/s]
+        kh=ncread(fname,'XKHH');                                           % eddy-diffusivity for scalars [m2/s]
 
-        qvtend=ncread(fname,'QVTEND_MICRO');                                       % qv microphysical tendency [kg/kg 1/s]
-        qctend=ncread(fname,'QCTEND_MICRO');                                       % qc microphysical tendency [kg/kg 1/s]
-        qitend=ncread(fname,'QITEND_MICRO');                                       % qi microphysical tendency [kg/kg 1/s]
-        thtend=ncread(fname,'THTEND_MICRO');                                       % th microphysical tendency [K/s]
+        qvtend=ncread(fname,'QVTEND_MICRO');                               % qv microphysical tendency [kg/kg 1/s]
+        qctend=ncread(fname,'QCTEND_MICRO');                               % qc microphysical tendency [kg/kg 1/s]
+        qitend=ncread(fname,'QITEND_MICRO');                               % qi microphysical tendency [kg/kg 1/s]
+        thtend=ncread(fname,'THTEND_MICRO');                               % th microphysical tendency [K/s]
 
         s=size(w);
         n=s(1);
@@ -97,6 +97,7 @@ for i = 1:5 %num_files
         p=p+pb;                                                            % pressure
         exn=(p/nam.P0).^(nam.R/nam.cp);                                    % exner function
         qt=qv+qc+qi;                                                       % total water mixing ratio [kg/kg] (no precipitating elements)
+        qt = qt * 1000; % convert to [g/kg]
 
         TH=mean(reshape(th,nm,l));
         t=th.*exn;                                                         % temperature
@@ -156,10 +157,10 @@ end
 figure();
 
 subplot(1,2,1);
-plot(time_hours, vert_av_qt(1, :)*10^3, 'Linewidth', 1.5); hold on;
-plot(time_hours, vert_av_qt(2, :)*10^3, 'Linewidth', 1.5);
+plot(time_hours, vert_av_qt(1, :), 'Linewidth', 1.5); hold on;
+plot(time_hours, vert_av_qt(2, :), 'Linewidth', 1.5);
 xlabel('Time [hours]','LineWidth',1.5,'FontSize',15);
-ylabel('q_t variance (vert. avg) [g/kg]','LineWidth',1.5,'FontSize',15);
+ylabel('q_t variance (vert. avg) ([g/kg])^2','LineWidth',1.5,'FontSize',15);
 legend('CP', 'NOCP','Location', 'northwest');
 title('Vert. average q_t variance', 'LineWidth',1,'FontSize',13, 'FontWeight','Normal');
 
@@ -175,9 +176,9 @@ plot(time_hours, diss_out(1,:), 'Linewidth', 1.5); hold on;
 plot(time_hours, diss_out(2,:), 'Linewidth', 1.5);
 
 xlabel('Time [hours]','LineWidth',1.5,'FontSize',15);
-ylabel('Vert. Avg. Budget Terms','LineWidth',1.5,'FontSize',15);
+ylabel('Magnitude [1/s*(g/kg)^2]','LineWidth',1.5,'FontSize',15);
 legend('TURB. CP', 'TURB. NOCP', 'MICRO. CP', 'MICRO. NOCP', 'PROD. CP', 'PROD. NOCP', 'DISS. CP', 'DISS. NOCP');
-title('Vert. integrated LWP', 'LineWidth',1,'FontSize',13, 'FontWeight','Normal');
+title('Vert. Avg. Budget Terms', 'LineWidth',1,'FontSize',13, 'FontWeight','Normal');
 
 
 

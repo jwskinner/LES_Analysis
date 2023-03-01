@@ -16,8 +16,8 @@ function plot_1d_profs(params, xlabels, titles, legendLabels, time)
     xlimits(1,:) = [-2, 2];
     xlimits(2,:) = [290, 360];
     xlimits(3,:) = [200,300];
-    xlimits(4,:) = [0, 0.02];
-    xlimits(5,:) = [0, 0.2*10^-4];
+    xlimits(4,:) = [0, 18];
+    xlimits(5,:) = [0, 0.2];
     xlimits(6,:) = [0, 0.2];
     xlimits(7,:) = [0, 1];
     xlimits(8,:) = [0, 10^7];
