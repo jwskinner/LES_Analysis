@@ -5,6 +5,18 @@
 %
 % Updated by J. W. Skinner (2023-28-02)
 
+% Define the folders for each case
+cold_pools = ["./data/small_domain/CP_OUT/", "./data/small_domain/NOCP_OUT/"];
+%cold_pools = ["/scratch/05999/mkurowsk/GATE_CP_CONSTFLX/", "/scratch/05999/mkurowsk/GATE_NOCP_CONSTFLX/"]
+
+% Get a list of all files in each folder
+files_cp = dir(strcat(cold_pools{1}, 'wrfout*'));
+files_nocp = dir(strcat(cold_pools{2}, 'wrfout*'));
+
+files_all = files_cp; % choose the folder with shortest output
+sample_file = strcat(cold_pools{1},files_all(1).name);                            % File for loading in all the numerical parameters of the simulation
+
+
 % Setup physical and numerical constants
 nam.R=287.04;                                                              % [J/kg/K]
 nam.cp=1004.67;                                                            % [J/kg/K]
@@ -20,16 +32,6 @@ nam.levs = size(ncread(sample_file,'U'), 3);                               % Num
 nam.nx = size(ncread(sample_file,'U'), 1);                                 % Number of x grid points in simulation
 nam.ny = size(ncread(sample_file,'U'), 2);                                 % Number of y grid points in simulation
 nam.txt = 'NOCP';
-
-% Define the folders for each case
-cold_pools = ["./data/small_domain/CP_OUT/", "./data/small_domain/NOCP_OUT/"];
-%cold_pools = ["/scratch/05999/mkurowsk/GATE_CP_CONSTFLX/", "/scratch/05999/mkurowsk/GATE_NOCP_CONSTFLX/"]
-
-% Get a list of all files in each folder
-files_cp = dir(strcat(cold_pools{1}, 'wrfout*'));
-files_nocp = dir(strcat(cold_pools{2}, 'wrfout*'));
-
-files_all = files_cp; % choose the folder with shortest output
 
 % Preallocate arrays for storing the computed values; index 1 is for CP or
 % NOCP
