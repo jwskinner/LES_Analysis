@@ -17,7 +17,8 @@ qi=ncread(fname,'QICE');                                                   % Ice
 
 s=size(th);n=s(1); m=s(2); l=s(3); nm=n*m;
 
-[Z, p, H] = vert_struct(fname, nam); 
+HS=mean(reshape(ph+phb,nm,l+1));                                           
+H=0.5*(HS(:,1:end-1)+HS(:,2:end));  
 
 Z=H./nam.g';                                                               % height at mass-levels [m]
 p=p+pb;                                                                    % pressure
@@ -32,6 +33,6 @@ qtrho = qt.*rho;                                                           % LWP
 
 LWP = trapz(Z',qtrho,3);                                                   % vertically integrated LWP
 
-MLWP = mean(LWP); 
+% MLWP = mean(LWP); 
         
 end

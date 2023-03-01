@@ -46,7 +46,7 @@ l=s(3);
 nm=n*m;
 
 HS=mean(reshape(ph+phb,nm,l+1));                                           % Jack added +1 here to fix reshape [check] 
-%H=0.5*(HS(1:end-1,:)+HS(2:end,:));                                        % Why is this an empty matrix (?)
+%H=0.5*(HS(1:end-1,:)+HS(2:end,:))                                         % commented out this empty matrix 
 H=0.5*(HS(:,1:end-1)+HS(:,2:end));                                         % Jack flipped the indexing to get the half values here 
 
 ZS=HS./nam.g;                                                              % height at w-levels [m]

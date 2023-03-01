@@ -15,8 +15,8 @@ nam.P0 = 1.e5;                  % base state pressure [Pa]
 nam.dt = 4.0;                   % Output frequency in hours
 
 % Define the folders for each case
-% cold_pools = ["./data/large_domain/CP_OUT/", "./data/large_domain/NOCP_OUT/"];
-cold_pools = ["/scratch/05999/mkurowsk/GATE_CP_CONSTFLX/", "/scratch/05999/mkurowsk/GATE_NOCP_CONSTFLX/"]
+ cold_pools = ["./data/small_domain/CP_OUT/", "./data/small_domain/NOCP_OUT/"];
+%cold_pools = ["/scratch/05999/mkurowsk/GATE_CP_CONSTFLX/", "/scratch/05999/mkurowsk/GATE_NOCP_CONSTFLX/"]
 
 % Get a list of all files in each folder
 files_cp = dir(strcat(cold_pools{1}, 'wrfout*'));
@@ -45,9 +45,9 @@ time_hours = zeros(1, num_files);
 [Z, p, H] = vert_struct(strcat(cold_pools(1),files_cp(1).name), nam);
 
 % Loop over the files and cases
-for i = 1:num_files
+for i = 1:5 %num_files
 
-    parfor j = 1:2
+    for j = 1:2
 
         cp = cold_pools(j);
 %         try 
@@ -57,18 +57,18 @@ for i = 1:num_files
         fname=strcat(cp,file);
 
         [rainnc, tke] = loadNetCDF(fname, 'RAINNC', 'TKE');
-
-        [hfx, qfx, lh] = loadNetCDF(fname, 'HFX', 'QFX', 'LH');
+        [hfx, qfx, lh] = loadNetCDF(fname, 'HFX', 'QFX', 'LH');           % Heat fluxes
+        %[cldfr, precr, precg] = loadNetCDF(fname, 'CLDFR', 'PRECR', 'PRECG'); 
 
         s=size(tke.Data); n=s(1); m=s(2); l=s(3); nm=n*m;
         TKE = mean(reshape(tke.Data,nm,l));                                % TKE
-        LWP = comp_LWP(fname, nam);                                        % LWP
+        LWP = mean_LWP(fname, nam);                                        % LWP
 %         CLDFR = mean(reshape(cldfr.Data,nm,l));
 
 
         TKE_out(j, i) = trapz(Z,TKE);
         RAINNC_out(j, i) = mean(rainnc.Data, 'all');
-%         PRECR_out(j, i) = mean(precr.Data, 'all');
+        PRECR_out(j, i) = mean(precr.Data, 'all');
 %         PRECG_out(j, i) = mean(precg.Data, 'all');
         LWP_out(j, i) = mean(LWP, 'all');
 %         CLDFR_out(j, i) = trapz(Z,CLDFR);

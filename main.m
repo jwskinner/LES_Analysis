@@ -9,8 +9,8 @@ clear variables
 %scratch = "/scratch/05999/mkurowsk/"; % For Tacc 
 scratch = "./data/"; % For jacks laptop
 
-folders = ["./large_domain/CP_OUT/", "./large_domain/NOCP_OUT/"];
-%folders = ["ocean_cp/", "ocean_nocp.1000/", "ocean_nocp/"]; 
+folders = ["./small_domain/CP_OUT/", "./small_domain/NOCP_OUT/"];
+%folders = ["ocean_cp/", "ocean_nocp/"]; 
 %folders = ["GATE_CP_CONSTFLX/", "GATE_NOCP_CONSTFLX/"]
  
 
@@ -42,7 +42,7 @@ nam.txt = 'NOCP';
 plot_out = 3;  % 0: Fields, 1: Budgets, 2:LWP, 3:1D profiles, 4: Vertical Structure
 
 % For creating movies frame by frame
-for i = 16:16 %length(files_all)
+for i = 12:12 %length(files_all)
 
     file = files_all(i).name;
     fname=strcat(folder,file);
@@ -105,10 +105,10 @@ for i = 16:16 %length(files_all)
         % Setup the plots for the profiles
         params = {U, TH,TEMP, QT, QC, TKE, TKE_HOR, TOT_WAT, Z};
         
-        xlabels = {"u (ms^{-1})", "\theta (K)", "T (K)", "q_t (g/kg)", ...
-            "q_c (g/kg)", "TKE (m^2s^{-2})", ...
+        xlabels = {"u (ms^{-1})", "\theta (K)", "T (K)", "q_t (kg/kg)", ...
+            "q_c (kg/kg)", "TKE (m^2s^{-2})", ...
             "1/2(u'^2+v'^2) (m^2s^{-2})", "T_{water}[kg]"};
-        
+
         titles = {"U", "Potential Temp.", "Temp.", "q_t", "q_c", "TKE", "TKE Hor.", ...
             "Total Water"};
 
