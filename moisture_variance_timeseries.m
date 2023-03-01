@@ -164,16 +164,18 @@ ylabel('q_t variance (vert. avg) ([g/kg])^2','LineWidth',1.5,'FontSize',15);
 legend('CP', 'NOCP','Location', 'northwest');
 title('Vert. average q_t variance', 'LineWidth',1,'FontSize',13, 'FontWeight','Normal');
 
-
 subplot(1,2,2);
-plot(time_hours, turb_out(1,:), 'Linewidth', 1.5); hold on;
-plot(time_hours, turb_out(2,:), 'Linewidth', 1.5);
-plot(time_hours, micro_out(1,:), 'Linewidth', 1.5); hold on;
-plot(time_hours, micro_out(2,:), 'Linewidth', 1.5);
-plot(time_hours, prod_out(1,:), 'Linewidth', 1.5); hold on;
-plot(time_hours, prod_out(2,:), 'Linewidth', 1.5);
-plot(time_hours, diss_out(1,:), 'Linewidth', 1.5); hold on;
-plot(time_hours, diss_out(2,:), 'Linewidth', 1.5);
+
+colors = {'blue', [0 0.5 0], 'red', [1 0.5 0]};
+
+plot(time_hours, turb_out(1,:), 'Linewidth', 1.5, 'Color', colors{1}); hold on;
+plot(time_hours, turb_out(2,:), 'Linewidth', 1.5, 'Color', colors{1}, 'linestyle','--');
+plot(time_hours, micro_out(1,:), 'Linewidth', 1.5, 'Color', colors{2}); hold on;
+plot(time_hours, micro_out(2,:), 'Linewidth', 1.5, 'Color', colors{2}, 'linestyle','--');
+plot(time_hours, prod_out(1,:), 'Linewidth', 1.5, 'Color', colors{3}); hold on;
+plot(time_hours, prod_out(2,:), 'Linewidth', 1.5, 'Color', colors{3}, 'linestyle','--');
+plot(time_hours, diss_out(1,:), 'Linewidth', 1.5, 'Color', colors{4}); hold on;
+plot(time_hours, diss_out(2,:), 'Linewidth', 1.5, 'Color', colors{4}, 'linestyle','--');
 
 xlabel('Time [hours]','LineWidth',1.5,'FontSize',15);
 ylabel('Magnitude [1/s*(g/kg)^2]','LineWidth',1.5,'FontSize',15);
