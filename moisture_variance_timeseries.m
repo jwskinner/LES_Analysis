@@ -5,15 +5,21 @@
 %
 % Updated by J. W. Skinner (2023-28-02)
 
-% Define constants
-nam.R = 287.04;                 % [J/kg/K]
-nam.cp = 1004.67;               % [J/kg/K]
-nam.g = 9.81;                   % [m/s^2]
-nam.Ll = 2.50e6;                % latent heat of evaporation (vapor:liquid) at 0C [J/kg]
-nam.Li = 2.83e6;                % latent heat of sublimation (vapor:solid) at 0C [J/kg]
-nam.T0 = 300;                   % base state temperature [K]
-nam.P0 = 1.e5;                  % base state pressure [Pa]
-nam.dt = 4.0;                   % Output frequency in hours
+% Setup physical and numerical constants
+nam.R=287.04;                                                              % [J/kg/K]
+nam.cp=1004.67;                                                            % [J/kg/K]
+nam.g=9.81;                                                                % [m/s2]
+nam.Ll=2.50e6;                                                             % latent heat of evaporation (vapor:liquid) at 0C [J/kg]
+nam.Li=2.83e6;                                                             % latent heat of sublimation (vapor:solid) at 0C [J/kg]
+nam.T0=300;                                                                % ncread(fname,'T00'); % base state temperature [K]
+nam.P0=1.e5;                                                               % ncread(fname,'P00'); % base state pressure [Pa]
+nam.dx=double(ncreadatt(sample_file,'/','DX'));                            % [m]
+nam.dy=double(ncreadatt(sample_file,'/','DY'));                            % [m]
+nam.dt = 0.5;                                                              % Output frequency [hours]
+nam.levs = size(ncread(sample_file,'U'), 3);                               % Number of vertical levels in the simulation
+nam.nx = size(ncread(sample_file,'U'), 1);                                 % Number of x grid points in simulation
+nam.ny = size(ncread(sample_file,'U'), 2);                                 % Number of y grid points in simulation
+nam.txt = 'NOCP';
 
 % Define the folders for each case
 cold_pools = ["./data/small_domain/CP_OUT/", "./data/small_domain/NOCP_OUT/"];
@@ -178,7 +184,7 @@ plot(time_hours, diss_out(1,:), 'Linewidth', 1.5, 'Color', colors{4}); hold on;
 plot(time_hours, diss_out(2,:), 'Linewidth', 1.5, 'Color', colors{4}, 'linestyle','--');
 
 xlabel('Time [hours]','LineWidth',1.5,'FontSize',15);
-ylabel('Magnitude [1/s*(g/kg)^2]','LineWidth',1.5,'FontSize',15);
+ylabel('Magnitude','LineWidth',1.5,'FontSize',15);
 legend('TURB. CP', 'TURB. NOCP', 'MICRO. CP', 'MICRO. NOCP', 'PROD. CP', 'PROD. NOCP', 'DISS. CP', 'DISS. NOCP');
 title('Vert. Avg. Budget Terms', 'LineWidth',1,'FontSize',13, 'FontWeight','Normal');
 
