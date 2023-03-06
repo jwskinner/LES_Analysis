@@ -185,9 +185,11 @@ thilvar.diss=-2*squeeze(mean(mean(kh.*(dthildx.^2+dthildy.^2+dthildz.^2))));
 %% ========================================================================
 % Plot all the terms here
 
+% Line widths for the plots 
 lw=1.75;
 lw2 = 1.5;
-figure
+
+figure('Renderer', 'painters', 'Position', [10 10 900 600]) % makes paper format figure
 subplot1 = subplot(1,2,1)
 plot(qtvar.prod,Z/10^3,'LineWidth',lw); hold on; grid on
 plot(qtvar.trns,Z/10^3,'LineWidth',lw);

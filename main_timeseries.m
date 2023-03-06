@@ -12,11 +12,11 @@ nam.Ll = 2.50e6;                % latent heat of evaporation (vapor:liquid) at 0
 nam.Li = 2.83e6;                % latent heat of sublimation (vapor:solid) at 0C [J/kg]
 nam.T0 = 300;                   % base state temperature [K]
 nam.P0 = 1.e5;                  % base state pressure [Pa]
-nam.dt = 4.0;                   % Output frequency in hours
+nam.dt = 0.5;                   % Output frequency in hours
 
 % Define the folders for each case
- cold_pools = ["./data/small_domain/CP_OUT/", "./data/small_domain/NOCP_OUT/"];
-%cold_pools = ["/scratch/05999/mkurowsk/GATE_CP_CONSTFLX/", "/scratch/05999/mkurowsk/GATE_NOCP_CONSTFLX/"]
+%cold_pools = ["./data/small_domain/CP_OUT/", "./data/small_domain/NOCP_OUT/"];
+cold_pools = ["/scratch/05999/mkurowsk/GATE_CP_CONSTFLX/", "/scratch/05999/mkurowsk/GATE_NOCP_CONSTFLX/"]
 
 % Get a list of all files in each folder
 files_cp = dir(strcat(cold_pools{1}, 'wrfout*'));
@@ -26,7 +26,7 @@ files_all = files_cp; % choose the folder with shortest output
 
 % Preallocate arrays for storing the computed values; index 1 is for CP or
 % NOCP
-num_files = 66; %length(files_nocp);
+num_files = length(files_cp);
 TKE_out = zeros(2, num_files);
 LWP_out = zeros(2, num_files);
 RAINNC_out = zeros(2, num_files);
@@ -45,9 +45,9 @@ time_hours = zeros(1, num_files);
 [Z, p, H] = vert_struct(strcat(cold_pools(1),files_cp(1).name), nam);
 
 % Loop over the files and cases
-for i = 1:5 %num_files
+for i = 1:num_files
 
-    for j = 1:2
+    parfor j = 1:2
 
         cp = cold_pools(j);
 %         try 
@@ -57,7 +57,7 @@ for i = 1:5 %num_files
         fname=strcat(cp,file);
 
         [rainnc, tke] = loadNetCDF(fname, 'RAINNC', 'TKE');
-        [hfx, qfx, lh] = loadNetCDF(fname, 'HFX', 'QFX', 'LH');           % Heat fluxes
+%         [hfx, qfx, lh] = loadNetCDF(fname, 'HFX', 'QFX', 'LH');           % Heat fluxes
         %[cldfr, precr, precg] = loadNetCDF(fname, 'CLDFR', 'PRECR', 'PRECG'); 
 
         s=size(tke.Data); n=s(1); m=s(2); l=s(3); nm=n*m;
@@ -68,14 +68,14 @@ for i = 1:5 %num_files
 
         TKE_out(j, i) = trapz(Z,TKE);
         RAINNC_out(j, i) = mean(rainnc.Data, 'all');
-        PRECR_out(j, i) = mean(precr.Data, 'all');
+%         PRECR_out(j, i) = mean(precr.Data, 'all');
 %         PRECG_out(j, i) = mean(precg.Data, 'all');
         LWP_out(j, i) = mean(LWP, 'all');
 %         CLDFR_out(j, i) = trapz(Z,CLDFR);
 
-        HFX_out(j, i) = mean(hfx.Data, 'all');
-        QFX_out(j, i) = mean(qfx.Data, 'all');
-        LH_out(j, i) = mean(lh.Data, 'all');
+%         HFX_out(j, i) = mean(hfx.Data, 'all');
+%         QFX_out(j, i) = mean(qfx.Data, 'all');
+%         LH_out(j, i) = mean(lh.Data, 'all');
 
         %% 
         % Compute two point correlation functions

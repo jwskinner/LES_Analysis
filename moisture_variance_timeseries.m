@@ -6,8 +6,8 @@
 % Updated by J. W. Skinner (2023-28-02)
 
 % Define the folders for each case
-cold_pools = ["./data/small_domain/CP_OUT/", "./data/small_domain/NOCP_OUT/"];
-%cold_pools = ["/scratch/05999/mkurowsk/GATE_CP_CONSTFLX/", "/scratch/05999/mkurowsk/GATE_NOCP_CONSTFLX/"]
+%cold_pools = ["./data/small_domain/CP_OUT/", "./data/small_domain/NOCP_OUT/"];
+cold_pools = ["/scratch/05999/mkurowsk/GATE_NOCP_CONSTFLX/", "/scratch/05999/mkurowsk/GATE_NOCP_CONSTFLX/"]
 
 % Get a list of all files in each folder
 files_cp = dir(strcat(cold_pools{1}, 'wrfout*'));
@@ -35,7 +35,7 @@ nam.txt = 'NOCP';
 
 % Preallocate arrays for storing the computed values; index 1 is for CP or
 % NOCP
-num_files = length(files_nocp);
+num_files = length(files_cp);
 
 turb_out = zeros(2, num_files);
 micro_out = zeros(2, num_files);

@@ -6,12 +6,12 @@
 
 clear variables
 
-%scratch = "/scratch/05999/mkurowsk/"; % For Tacc 
-scratch = "./data/"; % For jacks laptop
+scratch = "/scratch/05999/mkurowsk/"; % For Tacc 
+%scratch = "./data/"; % For jacks laptop
 
-folders = ["./small_domain/CP_OUT/", "./small_domain/NOCP_OUT/"];
+%folders = ["./small_domain/CP_OUT/", "./small_domain/NOCP_OUT/"];
 %folders = ["ocean_cp/", "ocean_nocp/"]; 
-%folders = ["GATE_CP_CONSTFLX/", "GATE_NOCP_CONSTFLX/"]
+folders = ["GATE_CP_CONSTFLX/", "GATE_NOCP_CONSTFLX/"]
  
 
 % Takes the first folder for loading in params. 
@@ -39,10 +39,10 @@ nam.ny = size(ncread(sample_file,'U'), 2);                                 % Num
 nam.txt = 'NOCP';
 
 % Plot diagnostic
-plot_out = 3;  % 0: Fields, 1: Budgets, 2:LWP, 3:1D profiles, 4: Vertical Structure
+plot_out = 1;  % 0: Fields, 1: Budgets, 2:LWP, 3:1D profiles, 4: Vertical Structure
 
 % For creating movies frame by frame
-for i = 12:12 %length(files_all)
+for i = 91:91 %length(files_all)
 
     file = files_all(i).name;
     fname=strcat(folder,file);
