@@ -4,16 +4,19 @@
 % last modified: 7/03/2023
 clear all 
 
-index = 10; % file index to plot 
+index = 120; % file number to plot 
 z = 1; % vertical level to plot 
 
-folders = ["./data/large_domain/CP_OUT/", "./data/large_domain/NOCP_OUT/"];
+% folders = ["./data/large_domain/CP_OUT/", "./data/large_domain/NOCP_OUT/"];
+folders = ["/scratch/05999/mkurowsk/GATE_NOCP_CONSTFLX/", "/scratch/05999/mkurowsk/GATE_CP_CONSTFLX/"]
 
 % Import the file 
 files_all = dir(strcat(folders(1), 'wrfout*'));
-file = files_all(index).name;
 
-fname_1=strcat(folders(1),file);
+for i = 1:120
+index = i 
+file = files_all(index).name;
+fname_1=strcat(folders(1),file)
 fname_2=strcat(folders(2),file);
 
 % Compute the 2D KE Spectra for each file 
@@ -21,12 +24,18 @@ fname_2=strcat(folders(2),file);
 [E_avg_2, kx, ky, nbins] = KE_2D_spectra(fname_2, z);
 
 %% Plot the kinetic energy spectrum
+f = gcf
 loglog((1:nbins)*min(kx(2), ky(2)), E_avg, 'linewidth', 2); hold on
 loglog((1:nbins)*min(kx(2), ky(2)), E_avg_2, 'linewidth', 2); hold on
 loglog(kx, 1e12*kx.^(-5/3), '--k', 'linewidth', 1)
 loglog(kx, 1e14*kx.^(-9/3), ':k', 'linewidth', 1)
 xlabel('Wavenumber k')
 ylabel('Kinetic Energy Spectrum')
-title('2D Kinetic Energy Spectrum')
-legend('NOCP', 'CP', 'k^{-5/3} scaling', 'k^{-9/3} scaling')
+title(strcat('t = ', num2str(i*0.25), ' hours'))
+legend('NOCP', 'CP', 'k^{-5/3} scaling', 'k^{-9/3} scaling'); hold off 
 xlim([1, 10^4])
+
+%% Turn on export frames to gif
+exportgraphics(f,strcat('./plots/KE_Spec/', 'GATE', '.gif'),'Resolution',150, 'Append',true)
+
+end 
