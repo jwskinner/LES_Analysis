@@ -16,9 +16,12 @@
 loc_cp = "./data/large_domain/CP_OUT/wrfout_d01_2020-01-02_06:00:00";
 loc_nocp = "./data/large_domain/NOCP_OUT/wrfout_d01_2020-01-02_06:00:00";
 
-% Define the grid spacing
-dx = 100; % meters
-dy = 100; % meters
+% Define the fixed height index for the spectrum in [m]
+height_m = 400;
+
+% Define the grid spacing and import the wind fields 
+dx = double(ncreadatt(sample_file,'/','DX')); % meters
+dy = double(ncreadatt(sample_file,'/','DY')); % meters
 dz = 100; % meters
 
 ucp = ncread(loc_cp, 'U');
@@ -31,10 +34,7 @@ vnocp = ncread(loc_nocp, 'V');
 U_NOCP=0.5*(unocp(1:end-1,:,:,:)+unocp(2:end,:,:,:)); %C->A grid
 V_NOCP=0.5*(vnocp(:,1:end-1,:,:)+vnocp(:,2:end,:,:));
 
-%% Define the fixed height index for the spectrum in [m]
-height_m = 400;
-
-% Get the vertical structure so we can select a height in [m]
+%% Get the vertical structure so we can select the height in [m]
 ph =ncread(loc_cp,'PH' );                                                  % geopotential perturbation [m2/s2]
 phb=ncread(loc_cp,'PHB');                                                  % base geopotential [m2/s2)
 p  =ncread(loc_cp,'P'  );                                                  % pressure perturbation [Pa]
