@@ -13,11 +13,11 @@
 % and line representing the k^-5/3 turbulence scaling. 
 
 %% Load the data from files (two here for comparing CP and NOCP)
-loc_cp = "./data/large_domain/CP_OUT/wrfout_d01_2020-01-02_06:00:00";
-loc_nocp = "./data/large_domain/NOCP_OUT/wrfout_d01_2020-01-02_06:00:00";
+loc_cp = "./data/large_domain/CP_OUT/wrfout_d01_2020-01-02_00:00:00";
+loc_nocp = "./data/large_domain/NOCP_OUT/wrfout_d01_2020-01-02_00:00:00";
 
 % Define the fixed height index for the spectrum in [m]
-height_m = 400;
+height_m = 360;
 
 % Define the grid spacing and import the wind fields 
 dx = double(ncreadatt(sample_file,'/','DX')); % meters
