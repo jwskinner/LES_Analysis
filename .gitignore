@@ -55,3 +55,6 @@ old_code/
 
 # Plots folder
 plots/
+
+# Python Code folder for testing python version of the code
+python_code/
