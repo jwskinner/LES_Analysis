@@ -3,7 +3,7 @@
 % model output file and formats it for paraview for 3D visualisation
 % There is now a time loop for bringing in the time evolving data 
 
-folder = "./data/small_domain/CP_OUT/"; 
+folder = "./data/small_domain/NOCP_OUT/"; 
 
 % Returns a list of all files in the folder
 files_all = dir(strcat(folder, 'wrfout*')); 
@@ -25,13 +25,13 @@ nam.ny = size(ncread(fname,'U'), 2);                                       % Num
 nam.dx=double(ncreadatt(fname,'/','DX'));                                  % [m]
 nam.dy=double(ncreadatt(fname,'/','DY'));                                  % [m]
 
-time = 3; 
+time = length(files_all); 
 qt_out = zeros(nam.nx-1, nam.ny, nam.levs, time);
 thil_out = zeros(nam.nx-1, nam.ny, nam.levs, time);
 u_out = zeros(nam.nx-1, nam.ny, nam.levs, time);
 time_out = zeros(time, 1); 
 
-for i = 1:3 %length(files_all)
+for i = 1:time
 
 fname=strcat(folder,files_all(i).name)
 
@@ -94,8 +94,8 @@ end
 
 %% Create the netcdf for paraview of the variables above
 %create the netcdf file
-p_out = './data/paraview_variables_cp.nc'; % Put the paraview variables in data so they don't sync to git
-ncid = netcdf.create(p_out,'NC_WRITE'); 
+p_out = './data/paraview_variables_nocp.nc'; % Put the paraview variables in data so they don't sync to git
+ncid = netcdf.create(p_out,'NETCDF4'); 
 
 % define dimensions
 nx_dimid = netcdf.defDim(ncid,'nx',size(u_out, 1));

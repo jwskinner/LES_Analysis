@@ -2,14 +2,13 @@
 % This main script loops over the data and performs analysis frame by frame
 % there are multiple options (e.g., Fields, Budgets, LWP, 1D profiles,
 % Vertical Structure, etc.) that can be chosen with the plot_out parameter.
-%
 
 clear variables
 
 %scratch = "/scratch/05999/mkurowsk/"; % For Tacc 
 scratch = "./data/"; % For jacks laptop
 
-folders = ["./large_domain/CP_OUT/", "./small_domain/NOCP_OUT/"];
+folders = ["./small_domain/CP_OUT/", "./small_domain/NOCP_OUT/"];
 %folders = ["ocean_cp/", "ocean_nocp/"]; 
 %folders = ["GATE_CP_CONSTFLX/", "GATE_NOCP_CONSTFLX/"]
  
@@ -39,7 +38,7 @@ nam.ny = size(ncread(sample_file,'U'), 2);                                 % Num
 nam.txt = 'CP';
 
 % Plot diagnostic
-plot_out = 5;  % 0: Fields, 1: Budgets, 2:LWP, 3:1D profiles, 4: Vertical Structure, 5: KE Spectra
+plot_out = 2;  % 0: Fields, 1: Budgets, 2:LWP, 3:1D profiles, 4: Vertical Structure, 5: KE Spectra
 
 % For creating movies frame by frame
 for i = 16:16 %length(files_all)
