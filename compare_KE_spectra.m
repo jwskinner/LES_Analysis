@@ -13,15 +13,22 @@
 % and line representing the k^-5/3 turbulence scaling. 
 
 %% Load the data from files (two here for comparing CP and NOCP)
+
 loc_cp = "./data/large_domain/CP_OUT/wrfout_d01_2020-01-02_00:00:00";
 loc_nocp = "./data/large_domain/NOCP_OUT/wrfout_d01_2020-01-02_00:00:00";
+
+% loc_cp = "./data/large_domain/CP_OUT/wrfout_d01_2020-01-02_06:00:00";
+% loc_nocp = "./data/large_domain/NOCP_OUT/wrfout_d01_2020-01-02_06:00:00";
+
+loc_cp = "/scratch/05999/mkurowsk/GATE_CP_CONSTFLX/wrfout_d01_2020-01-01_06:00:00"
+loc_nocp = "/scratch/05999/mkurowsk/GATE_NOCP_CONSTFLX/wrfout_d01_2020-01-01_06:00:00"
 
 % Define the fixed height index for the spectrum in [m]
 height_m = 360;
 
 % Define the grid spacing and import the wind fields 
-dx = double(ncreadatt(sample_file,'/','DX')); % meters
-dy = double(ncreadatt(sample_file,'/','DY')); % meters
+dx = double(ncreadatt(loc_cp,'/','DX')); % meters
+dy = double(ncreadatt(loc_cp,'/','DY')); % meters
 dz = 100; % meters
 
 ucp = ncread(loc_cp, 'U');
@@ -52,6 +59,8 @@ ZS=HS./9.81;                                                               % hei
 diffs = abs(ZS - height_m);
 [~, z_idx] = min(diffs);
 
+output = z_idx
+
 %% Compute Spectrum of CP and NOCP solutions calling function defined below 
 
 [TKE_spectrum_CP, KX] = compute_TKE_spectrum(U_CP, V_CP, z_idx);
@@ -61,11 +70,11 @@ diffs = abs(ZS - height_m);
 figure;
 loglog(KX, TKE_spectrum_CP, 'LineWidth',1.5); hold on
 loglog(KX, TKE_spectrum_NOCP, 'LineWidth',1.5); hold on
-loglog(KX(1020:end), 0.5*1e11*(KX(1020:end)).^(-5/3), 'k--', 'LineWidth',1.2); % Add line for k^-5/3 scaling
+loglog(KX(520:end), 0.5*1e11*(KX(520:end)).^(-5/3), 'k--', 'LineWidth',1.2); % Add line for k^-5/3 scaling
 xlabel('Wavenumber, k');
-ylabel('TKE (m^2/s^2)');
+ylabel('E(k)');
 % title(sprintf('E_{uu} spectrum at z=%.1f m', z_idx*dz));
-legend('CP', 'NOCP', 'k^{-5/3}')
+legend('CP', 'NOCP')
 xlim([1, 3*10^3])
 ylim([100, 10^10])
 
