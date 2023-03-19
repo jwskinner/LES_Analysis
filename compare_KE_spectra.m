@@ -12,19 +12,21 @@
 % 5) plot TKE spectrum in log-log scale vs wavenumber in units of 1/m, 
 % and line representing the k^-5/3 turbulence scaling. 
 
+clear all 
+
 %% Load the data from files (two here for comparing CP and NOCP)
 
-loc_cp = "./data/large_domain/CP_OUT/wrfout_d01_2020-01-02_00:00:00";
-loc_nocp = "./data/large_domain/NOCP_OUT/wrfout_d01_2020-01-02_00:00:00";
+loc_cp = "./data/GATE_CP_int_domain/wrfout_d01_2020-01-03_00:00:00";
+% loc_cp = "./data/GATE_CP_int_domain/wrfout_d01_2020-01-03_00:00:00";
 
 % loc_cp = "./data/large_domain/CP_OUT/wrfout_d01_2020-01-02_06:00:00";
 % loc_nocp = "./data/large_domain/NOCP_OUT/wrfout_d01_2020-01-02_06:00:00";
 
-loc_cp = "/scratch/05999/mkurowsk/GATE_CP_CONSTFLX/wrfout_d01_2020-01-01_06:00:00"
-loc_nocp = "/scratch/05999/mkurowsk/GATE_NOCP_CONSTFLX/wrfout_d01_2020-01-01_06:00:00"
+% loc_cp = "/scratch/05999/mkurowsk/GATE_CP_CONSTFLX/wrfout_d01_2020-01-01_06:00:00"
+% loc_nocp = "/scratch/05999/mkurowsk/GATE_NOCP_CONSTFLX/wrfout_d01_2020-01-01_06:00:00"
 
 % Define the fixed height index for the spectrum in [m]
-height_m = 360;
+height_m = 0;
 
 % Define the grid spacing and import the wind fields 
 dx = double(ncreadatt(loc_cp,'/','DX')); % meters
@@ -36,17 +38,17 @@ vcp = ncread(loc_cp, 'V');
 U_CP=0.5*(ucp(1:end-1,:,:,:)+ucp(2:end,:,:,:)); %C->A grid
 V_CP=0.5*(vcp(:,1:end-1,:,:)+vcp(:,2:end,:,:));
 
-unocp = ncread(loc_nocp, 'U');
-vnocp = ncread(loc_nocp, 'V');
-U_NOCP=0.5*(unocp(1:end-1,:,:,:)+unocp(2:end,:,:,:)); %C->A grid
-V_NOCP=0.5*(vnocp(:,1:end-1,:,:)+vnocp(:,2:end,:,:));
+% unocp = ncread(loc_nocp, 'U');
+% vnocp = ncread(loc_nocp, 'V');
+% U_NOCP=0.5*(unocp(1:end-1,:,:,:)+unocp(2:end,:,:,:)); %C->A grid
+% V_NOCP=0.5*(vnocp(:,1:end-1,:,:)+vnocp(:,2:end,:,:));
 
 %% Get the vertical structure so we can select the height in [m]
 ph =ncread(loc_cp,'PH' );                                                  % geopotential perturbation [m2/s2]
 phb=ncread(loc_cp,'PHB');                                                  % base geopotential [m2/s2)
 p  =ncread(loc_cp,'P'  );                                                  % pressure perturbation [Pa]
 pb =ncread(loc_cp,'PB' );                                                  % base pressure [Pa]
-th =ncread(loc_cp,'T'  )+300;                                              % Potential temperature [K]
+th =ncread(loc_cp,'T'  )+300.0;                                            % Potential temperature [K]
 
 s=size(phb);
 n=s(1); m=s(2); l=s(3); nm=n*m;
@@ -64,13 +66,13 @@ output = z_idx
 %% Compute Spectrum of CP and NOCP solutions calling function defined below 
 
 [TKE_spectrum_CP, KX] = compute_TKE_spectrum(U_CP, V_CP, z_idx);
-[TKE_spectrum_NOCP, KX] = compute_TKE_spectrum(U_NOCP, V_NOCP, z_idx);
+% [TKE_spectrum_NOCP, KX_2] = compute_TKE_spectrum(U_NOCP, V_NOCP, z_idx);
 
 %% Plot the TKE spectrum versus wavenumber in units of 1/m
-figure;
+%  figure;
 loglog(KX, TKE_spectrum_CP, 'LineWidth',1.5); hold on
-loglog(KX, TKE_spectrum_NOCP, 'LineWidth',1.5); hold on
-loglog(KX(520:end), 0.5*1e11*(KX(520:end)).^(-5/3), 'k--', 'LineWidth',1.2); % Add line for k^-5/3 scaling
+% loglog(KX_2, TKE_spectrum_NOCP, 'LineWidth',1.5); hold on
+% loglog(KX(520:end), 0.5*1e11*(KX(520:end)).^(-5/3), 'k--', 'LineWidth',1.2); % Add line for k^-5/3 scaling
 xlabel('Wavenumber, k');
 ylabel('E(k)');
 % title(sprintf('E_{uu} spectrum at z=%.1f m', z_idx*dz));

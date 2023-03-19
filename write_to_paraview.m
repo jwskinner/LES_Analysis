@@ -3,7 +3,7 @@
 % model output file and formats it for paraview for 3D visualisation
 % There is now a time loop for bringing in the time evolving data 
 
-folder = "./data/small_domain/NOCP_OUT/"; 
+folder = "./data/GATE_CP_int_domain/"; 
 
 % Returns a list of all files in the folder
 files_all = dir(strcat(folder, 'wrfout*')); 
@@ -29,9 +29,10 @@ time = length(files_all);
 qt_out = zeros(nam.nx-1, nam.ny, nam.levs, time);
 thil_out = zeros(nam.nx-1, nam.ny, nam.levs, time);
 u_out = zeros(nam.nx-1, nam.ny, nam.levs, time);
+vor_out = zeros(nam.nx-1, nam.ny, nam.levs, time);
 time_out = zeros(time, 1); 
 
-for i = 1:time
+for i = 12:12
 
 fname=strcat(folder,files_all(i).name)
 
@@ -42,6 +43,7 @@ w = ncread(fname, 'W');
 
 u=0.5*(u(1:end-1,:,:,:)+u(2:end,:,:,:)); %C->A grid
 v=0.5*(v(:,1:end-1,:,:)+v(:,2:end,:,:));
+w=0.5*(w(:,:,1:end-1,:)+w(:,:,2:end,:));
 
 ph =ncread(fname,'PH' );                                                   % geopotential perturbation [m2/s2]
 phb=ncread(fname,'PHB');                                                   % base geopotential [m2/s2)
@@ -75,6 +77,23 @@ t=th.*exn;                                                                 % tem
 tv=t.*(1+0.608*qv);                                                        % virtual temperature, bouyancy is tv - ql (eq. 1 Marcin)
 thil=th-(nam.Ll*qc+nam.Li*qi)./(nam.cp*exn);                               % liquid water potential temperature
 
+%% Compute the vorticity in 3D space 
+[Nx, Ny, Nz] = size(w);
+dz = mean(diff(Z)); %create list of dzs to account for non-linear z spacing added mean to make this scalar, jack fix later
+
+[dudy, dudx, dudz] = gradient(u, nam.dy, nam.dx, dz);
+[dvdy, dvdx, dvdz] = gradient(v, nam.dy, nam.dx, dz);
+[dwdy, dwdx, dwdz] = gradient(w, nam.dy, nam.dx, dz);
+
+vor_x = dwdy - dvdz;
+vor_y = dudz - dwdx;
+vor_z = dvdx - dudy;
+
+vor_mag = sqrt(vor_x.^2 + vor_y.^2 + vor_z.^2);
+
+%% TODO: Output the `Cloud field' qc for now
+
+
 %% Setup the length grid rather than using grid points 
 % Simple linear grid
 x = 1:nam.nx; 
@@ -89,12 +108,13 @@ u_out(:,:,:,i) = u;
 thil_out(:,:,:,i) = thil; 
 qt_out(:,:,:,i) = qt; 
 time_out(i) = (i - 1)*nam.dt; 
+vor_out(:,:,:,i) = vor_mag; 
 
 end
 
 %% Create the netcdf for paraview of the variables above
 %create the netcdf file
-p_out = './data/paraview_variables_nocp.nc'; % Put the paraview variables in data so they don't sync to git
+p_out = './data/paraview_GATE_cp.nc'; % Put the paraview variables in data so they don't sync to git
 ncid = netcdf.create(p_out,'NETCDF4'); 
 
 % define dimensions
@@ -107,6 +127,7 @@ time_dimid = netcdf.defDim(ncid,'time',size(u_out, 4));
 u_varid = netcdf.defVar(ncid,'u','double',[nx_dimid,ny_dimid,levs_dimid, time_dimid]);
 thil_varid = netcdf.defVar(ncid,'thil','double',[nx_dimid,ny_dimid,levs_dimid, time_dimid]);
 qt_varid = netcdf.defVar(ncid,'qt','double',[nx_dimid,ny_dimid,levs_dimid, time_dimid]);
+vor_varid = netcdf.defVar(ncid,'vor','double',[nx_dimid,ny_dimid,levs_dimid, time_dimid]);
 
 % add attribute metadata
 netcdf.putAtt(ncid,u_varid,'units','m/s');
@@ -124,6 +145,7 @@ netcdf.endDef(ncid);
 netcdf.putVar(ncid, u_varid, u_out);
 netcdf.putVar(ncid, thil_varid, thil_out);
 netcdf.putVar(ncid, qt_varid, qt_out);
+netcdf.putVar(ncid,vor_varid, vor_out);
 netcdf.putVar(ncid, time_varid, time_out);
 
 % close netcdf file

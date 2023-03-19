@@ -1,13 +1,13 @@
 % Script for computing moisture variance timeseries and timeseries of the
 % budget terms (to be added later on)
 %
-% [Caution: This is an early draft script!]
+% [Warning: This is an early draft script!]
 %
 % Updated by J. W. Skinner (2023-28-02)
 
 % Define the folders for each case
-%cold_pools = ["./data/small_domain/CP_OUT/", "./data/small_domain/NOCP_OUT/"];
-cold_pools = ["/scratch/05999/mkurowsk/GATE_NOCP_CONSTFLX/", "/scratch/05999/mkurowsk/GATE_NOCP_CONSTFLX/"]
+cold_pools = ["./data/small_domain/CP_OUT/", "./data/small_domain/NOCP_OUT/"];
+%cold_pools = ["/scratch/05999/mkurowsk/GATE_NOCP_CONSTFLX/", "/scratch/05999/mkurowsk/GATE_NOCP_CONSTFLX/"]
 
 % Get a list of all files in each folder
 files_cp = dir(strcat(cold_pools{1}, 'wrfout*'));
@@ -49,7 +49,7 @@ time_hours = zeros(1, num_files);
 [Z, p, H] = vert_struct(strcat(cold_pools(1),files_cp(1).name), nam);
 
 % Loop over the files and cases
-for i = 1:num_files
+for i = 1:10
 
     for j = 1:2
 

@@ -65,7 +65,7 @@ y_km = linspace(0, (n*nam.dy)/1000, n);
 image(x_km, y_km, LWP,'CDataMapping','scaled'); hold on; grid on
 ylabel('y [km]','LineWidth',1,'FontSize',14);
 xlabel('x [km]','LineWidth',1,'FontSize',14);
-title(num2str(time,'%.1f')+" hours")
+% title(num2str(time,'%.1f')+" hours")
 
 
 % colormap = cmocean('ice'); % can put in a nicer colourmap later
