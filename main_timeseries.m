@@ -76,6 +76,8 @@ for i = 1:t_length
         TKE_out(j, i) = trapz(Z,TKE);
         RAINNC_out(j, i) = mean(rainnc, 'all');
         LWP_out(j, i) = mean(LWP, 'all');
+        
+        qt=qv+qc+qi;                                                               % total water mixing ratio [kg/kg] (no precipitating elements)
 
         QT=mean(reshape(qt,nm,l));                                         % Horizontally average moisture variance
         QT_out(j, i) = mean(QT);                                           % Vertically average the moisture vairance (compare to Schemann & Seifert, 2017)
