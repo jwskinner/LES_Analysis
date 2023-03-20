@@ -194,14 +194,14 @@ title('Vert. Avg. Budget Terms', 'LineWidth',1,'FontSize',13, 'FontWeight','Norm
 
 subplot(1,2,2)
 % plot(time_hours, turb_out(1,:)/turb_out(1,2), 'Linewidth', 1.5, 'Color', colors{1}); hold on;
-plot(time_hours, prod_out(2,:)/prod_out(2,2), 'Linewidth', 1.5, 'linestyle','-');
+plot(time_hours, prod_out(2,:)/prod_out(2,2), 'Linewidth', 1.5, 'linestyle','-');hold on
 plot(time_hours, turb_out(2,:)/turb_out(2,2), 'Linewidth', 1.5, 'linestyle','-');hold on
 % plot(time_hours, micro_out(1,:)/micro_out(1,2), 'Linewidth', 1.5, 'Color', colors{2}); hold on;
-plot(time_hours, micro_out(2,:)/micro_out(2,2), 'Linewidth', 1.5, 'linestyle','-');
+plot(time_hours, micro_out(2,:)/micro_out(2,2), 'Linewidth', 1.5, 'linestyle','-');hold on
 % plot(time_hours, prod_out(1,:)/prod_out(1,2), 'Linewidth', 1.5, 'Color', colors{3}); hold on;
 
 % plot(time_hours, diss_out(1,:)/diss_out(1,2), 'Linewidth', 1.5, 'Color', colors{4}); hold on;
-plot(time_hours, diss_out(2,:)/diss_out(2,2), 'Linewidth', 1.5, 'linestyle','-');
+plot(time_hours, diss_out(2,:)/diss_out(2,2), 'Linewidth', 1.5, 'linestyle','-');hold on
 
 xlabel('Time [hours]','LineWidth',1.5,'FontSize',15);
 set(gca, 'YScale', 'log')
