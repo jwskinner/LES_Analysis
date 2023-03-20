@@ -8,7 +8,8 @@ clear variables
 %scratch = "/scratch/05999/mkurowsk/"; % For Tacc 
 scratch = "./data/"; % For jacks laptop
 
-folders = ["./GATE_NOCP_int_domain/", "./GATE_CP_int_domain/"];
+folders = ["./large_domain/CP_OUT/", "./large_domain/NOCP_OUT/"]
+%folders = ["./GATE_NOCP_int_domain/", "./GATE_CP_int_domain/"];
 %folders = ["ocean_cp/", "ocean_nocp/"]; 
 %folders = ["GATE_CP_CONSTFLX/", "GATE_NOCP_CONSTFLX/"]
  
@@ -38,10 +39,10 @@ nam.ny = size(ncread(sample_file,'U'), 2);                                 % Num
 nam.txt = 'NOCP';
 
 % Plot diagnostic
-plot_out = 3;  % 0: Fields, 1: Budgets, 2:LWP, 3:1D profiles, 4: Vertical Structure, 5: KE Spectra
+plot_out = 2;  % 0: Fields, 1: Budgets, 2:LWP, 3:1D profiles, 4: Vertical Structure, 5: KE Spectra
 
 % For creating movies frame by frame
-for i = 1:1 %length(files_all)
+for i = 16:16 %length(files_all)
 
     file = files_all(i).name;
     fname=strcat(folder,file);

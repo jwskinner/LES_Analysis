@@ -49,7 +49,7 @@ time_hours = zeros(1, num_files);
 [Z, p, H] = vert_struct(strcat(cold_pools(1),files_cp(1).name), nam);
 
 % Loop over the files and cases
-for i = 1:10
+for i = 1:30 %num_files-1
 
     for j = 1:2
 
@@ -164,30 +164,49 @@ end
 %%
 figure();
 
-subplot(1,2,1);
-plot(time_hours, vert_av_qt(1, :), 'Linewidth', 1.5); hold on;
-plot(time_hours, vert_av_qt(2, :), 'Linewidth', 1.5);
+% subplot(1,2,1);
+% plot(time_hours, vert_av_qt(1, :), 'Linewidth', 1.5); hold on;
+% plot(time_hours, vert_av_qt(2, :), 'Linewidth', 1.5);
+% xlabel('Time [hours]','LineWidth',1.5,'FontSize',15);
+% ylabel('q_t variance (vert. avg) ([g/kg])^2','LineWidth',1.5,'FontSize',15);
+% legend('CP', 'NOCP','Location', 'northwest');
+% title('Vert. average q_t variance', 'LineWidth',1,'FontSize',13, 'FontWeight','Normal');
+% 
+% subplot(1,2,2);
+
+% colors = {'blue', [0 0.5 0], 'blue', [1 0.5 0]};
+
+subplot(1,2,1)
+plot(time_hours, prod_out(1,:)/prod_out(1,2), 'Linewidth', 1.5); hold on;
+plot(time_hours, turb_out(1,:)/turb_out(1,2), 'Linewidth', 1.5); hold on;
+% plot(time_hours, turb_out(2,:)/turb_out(2,2), 'Linewidth', 1.5, 'Color', colors{1}, 'linestyle','--');
+plot(time_hours, micro_out(1,:)/micro_out(1,2), 'Linewidth', 1.5); hold on;
+% plot(time_hours, micro_out(2,:)/micro_out(2,2), 'Linewidth', 1.5, 'Color', colors{2}, 'linestyle','--');
+% plot(time_hours, prod_out(2,:)/prod_out(2,2), 'Linewidth', 1.5, 'Color', colors{3}, 'linestyle','--');
+plot(time_hours, diss_out(1,:)/diss_out(1,2), 'Linewidth', 1.5); hold on;
+% plot(time_hours, diss_out(2,:)/diss_out(2,2), 'Linewidth', 1.5, 'Color', colors{4}, 'linestyle','--');
+
 xlabel('Time [hours]','LineWidth',1.5,'FontSize',15);
-ylabel('q_t variance (vert. avg) ([g/kg])^2','LineWidth',1.5,'FontSize',15);
-legend('CP', 'NOCP','Location', 'northwest');
-title('Vert. average q_t variance', 'LineWidth',1,'FontSize',13, 'FontWeight','Normal');
+set(gca, 'YScale', 'log')
+ylabel('Norm. Magnitude','LineWidth',1.5,'FontSize',15);
+legend('TURB. CP', 'MICRO. CP', 'PROD. CP', 'DISS. CP');
+title('Vert. Avg. Budget Terms', 'LineWidth',1,'FontSize',13, 'FontWeight','Normal');
 
-subplot(1,2,2);
+subplot(1,2,2)
+% plot(time_hours, turb_out(1,:)/turb_out(1,2), 'Linewidth', 1.5, 'Color', colors{1}); hold on;
+plot(time_hours, prod_out(2,:)/prod_out(2,2), 'Linewidth', 1.5, 'linestyle','-');
+plot(time_hours, turb_out(2,:)/turb_out(2,2), 'Linewidth', 1.5, 'linestyle','-');hold on
+% plot(time_hours, micro_out(1,:)/micro_out(1,2), 'Linewidth', 1.5, 'Color', colors{2}); hold on;
+plot(time_hours, micro_out(2,:)/micro_out(2,2), 'Linewidth', 1.5, 'linestyle','-');
+% plot(time_hours, prod_out(1,:)/prod_out(1,2), 'Linewidth', 1.5, 'Color', colors{3}); hold on;
 
-colors = {'blue', [0 0.5 0], 'red', [1 0.5 0]};
-
-plot(time_hours, turb_out(1,:), 'Linewidth', 1.5, 'Color', colors{1}); hold on;
-plot(time_hours, turb_out(2,:), 'Linewidth', 1.5, 'Color', colors{1}, 'linestyle','--');
-plot(time_hours, micro_out(1,:), 'Linewidth', 1.5, 'Color', colors{2}); hold on;
-plot(time_hours, micro_out(2,:), 'Linewidth', 1.5, 'Color', colors{2}, 'linestyle','--');
-plot(time_hours, prod_out(1,:), 'Linewidth', 1.5, 'Color', colors{3}); hold on;
-plot(time_hours, prod_out(2,:), 'Linewidth', 1.5, 'Color', colors{3}, 'linestyle','--');
-plot(time_hours, diss_out(1,:), 'Linewidth', 1.5, 'Color', colors{4}); hold on;
-plot(time_hours, diss_out(2,:), 'Linewidth', 1.5, 'Color', colors{4}, 'linestyle','--');
+% plot(time_hours, diss_out(1,:)/diss_out(1,2), 'Linewidth', 1.5, 'Color', colors{4}); hold on;
+plot(time_hours, diss_out(2,:)/diss_out(2,2), 'Linewidth', 1.5, 'linestyle','-');
 
 xlabel('Time [hours]','LineWidth',1.5,'FontSize',15);
-ylabel('Magnitude','LineWidth',1.5,'FontSize',15);
-legend('TURB. CP', 'TURB. NOCP', 'MICRO. CP', 'MICRO. NOCP', 'PROD. CP', 'PROD. NOCP', 'DISS. CP', 'DISS. NOCP');
+set(gca, 'YScale', 'log')
+ylabel('Norm. Magnitude','LineWidth',1.5,'FontSize',15);
+legend('TURB. NOCP', 'MICRO. NOCP', 'PROD. NOCP', 'DISS. NOCP');
 title('Vert. Avg. Budget Terms', 'LineWidth',1,'FontSize',13, 'FontWeight','Normal');
 
 

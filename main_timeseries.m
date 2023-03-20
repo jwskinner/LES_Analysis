@@ -25,7 +25,7 @@ files_nocp = dir(strcat(cold_pools{2}, 'wrfout*'));
 files_all = files_cp; % choose the folder with shortest output
 num_files = length(files_cp);
 
-t_length = num_files;               % Length of the timeseries (usually num files but can be shorter if the heart desires)
+t_length = 30 %num_files;               % Length of the timeseries (usually num files but can be shorter if the heart desires)
 
 % Preallocate arrays for storing the computed values; index 1 is for CP or
 % NOCP
@@ -52,13 +52,13 @@ for i = 1:t_length
     for j = 1:2
 
         cp = cold_pools(j);
-%         try 
         fprintf('Filename: %s\n', files_all(i).name);
 
         file = files_all(i).name;
         fname=strcat(cp,file);
         
         % Read in the things we want 
+        try
         rainnc = ncread(fname,'RAINNC');
         tke = ncread(fname,'TKE');
         qv=ncread(fname,'QVAPOR');                                         % Water vapor mixing ratio [kg/kg]
@@ -80,9 +80,19 @@ for i = 1:t_length
         qt=qv+qc+qi;                                                       % total water mixing ratio [kg/kg] (no precipitating elements)
 
         QT=mean(reshape(qt,nm,l));                                         % Horizontally average moisture variance
-        QT_out(j, i) = trapz(Z,QT_out);                                    % Vertically integrate the moisture vairance (compare to Schemann & Seifert, 2017)
+        QT_out(j, i) = trapz(Z,QT);                                    % Vertically integrate the moisture vairance (compare to Schemann & Seifert, 2017)
+% 
+        catch 
+% 
+        TKE_out(j, i) = -1;
+        RAINNC_out(j, i) = -1;
+        LWP_out(j, i) = -1;                                                                                          
+        QT_out(j, i) = -1; 
+        
+        end
 
     end
+
     time_hours(i) = 0 + (i-1)*nam.dt;
 
 
