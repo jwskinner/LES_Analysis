@@ -25,7 +25,7 @@ files_nocp = dir(strcat(cold_pools{2}, 'wrfout*'));
 files_all = files_cp; % choose the folder with shortest output
 num_files = length(files_cp);
 
-t_length = 15;               % Length of the timeseries (usually num files but can be shorter if the heart desires)
+t_length = num_files;               % Length of the timeseries (usually num files but can be shorter if the heart desires)
 
 % Preallocate arrays for storing the computed values; index 1 is for CP or
 % NOCP
@@ -77,10 +77,10 @@ for i = 1:t_length
         RAINNC_out(j, i) = mean(rainnc, 'all');
         LWP_out(j, i) = mean(LWP, 'all');
         
-        qt=qv+qc+qi;                                                               % total water mixing ratio [kg/kg] (no precipitating elements)
+        qt=qv+qc+qi;                                                       % total water mixing ratio [kg/kg] (no precipitating elements)
 
         QT=mean(reshape(qt,nm,l));                                         % Horizontally average moisture variance
-        QT_out(j, i) = mean(QT);                                           % Vertically average the moisture vairance (compare to Schemann & Seifert, 2017)
+        QT_out(j, i) = trapz(Z,QT_out);                                    % Vertically integrate the moisture vairance (compare to Schemann & Seifert, 2017)
 
     end
     time_hours(i) = 0 + (i-1)*nam.dt;
@@ -121,10 +121,10 @@ legend('CP', 'NOCP', 'Location', 'northwest')
 
 %%
 figure()
-plot(time_hours, QT_out(1, :), 'Linewidth', 1.5); hold on;
-plot(time_hours, QT_out(2, :), 'Linewidth', 1.5);
+plot(time_hours, QT_out(1, :)*1000, 'Linewidth', 1.5); hold on;
+plot(time_hours, QT_out(2, :)*1000, 'Linewidth', 1.5);
 xlabel('Time [hours]','LineWidth',1.5,'FontSize',15);
-ylabel('VTKE [m^2 s^{-2}]','LineWidth',1.5,'FontSize',15);
+ylabel('[(g/kg)^2]','LineWidth',1.5,'FontSize',15);
 legend('CP', 'NOCP','Location', 'northwest');
 title('Vert. avg. Q_t', 'LineWidth',1,'FontSize',13, 'FontWeight','Normal');
 
