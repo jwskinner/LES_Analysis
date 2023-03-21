@@ -49,7 +49,7 @@ time_hours = zeros(1, num_files);
 [Z, p, H] = vert_struct(strcat(cold_pools(1),files_cp(1).name), nam);
 
 % Loop over the files and cases
-for i = 1:30 %num_files-1
+parfor i = 1:3 %num_files-1
 
     for j = 1:2
 
@@ -119,10 +119,12 @@ for i = 1:30 %num_files-1
         % QT variance budget terms -- Eq (1) Thomas et al. 2021
 
         W=mean(reshape(w,nm,l));
+        wpr= zeros(1,1,l);
         wpr(1,1,:)=W;
         wpert=bsxfun(@minus,w,wpr);
 
         QT=mean(reshape(qt,nm,l));                                         % Horizontally average moisture variance
+        qtpr= zeros(1,1,l);
         qtpr(1,1,:)=QT;
         qtpert=bsxfun(@minus,qt,qtpr);
 
@@ -140,6 +142,7 @@ for i = 1:30 %num_files-1
         [dqtdx,dqtdy,dqtdz]=gradient((qtpert),nam.dx,nam.dy,50);
 
         % all budget terms converted to units of [1/s*(g/kg)^2]
+        qtvar = struct();
         qtvar.prod=-2*WQT'.*gradient(QT',Z)*1e6;                           % Gradient Production Term
         qtvar.trns=-1./RHO.*gradient(RHO.*WQT2,Z)*1e6;                     % Turbulent transport term
 
