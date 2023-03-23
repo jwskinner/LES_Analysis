@@ -34,7 +34,7 @@ nx = size(ucp, 1);
 % Compute Spectrum of CP and NOCP solutions
 [TKE_spectrum_CP, KX] = compute_TKE_spectrum(U_CP, V_CP, z_idx, dx); 
 
-%% Plot the TKE spectrum versus wavenumber in units of 1/m
+%% Plot the TKE spectrum versus wavenumber in units of 1/m or Length in m
 %figure;
 loglog(pi./KX, TKE_spectrum_CP, 'LineWidth',1.5); hold on
 loglog(2*pi./KX(:), 1e7*(2*pi./KX(:)).^(5/3), 'k--', 'LineWidth',1.2); % Add line for k^-5/3 scaling
