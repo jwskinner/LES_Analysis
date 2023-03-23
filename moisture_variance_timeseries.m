@@ -49,7 +49,7 @@ time_hours = zeros(1, num_files);
 [Z, p, H] = vert_struct(strcat(cold_pools(1),files_cp(1).name), nam);
 
 % Loop over the files and cases
-parfor i = 1:3 %num_files-1
+parfor i = 1:10 %num_files-1
 
     for j = 1:2
 
