@@ -15,8 +15,9 @@ nam.P0 = 1.e5;                  % base state pressure [Pa]
 nam.dt = 0.5;                   % Output frequency in hours
 
 % Define the folders for each case
-cold_pools = ["./data/small_domain/CP_OUT/", "./data/small_domain/NOCP_OUT/"];
-%cold_pools = ["/scratch/05999/mkurowsk/GATE_CP_CONSTFLX/", "/scratch/05999/mkurowsk/GATE_NOCP_CONSTFLX/"]
+%cold_pools = ["./data/small_domain/CP_OUT/", "./data/small_domain/NOCP_OUT/"];
+cold_pools = ["/scratch/05999/mkurowsk/GATE_NOCP_CONSTFLX/", "/scratch/05999/mkurowsk/GATE_NOCP_CONSTFLX_100km/", "/scratch/05999/mkurowsk/GATE_NOCP_CONSTFLX_50km/"]
+legend_text = ["GATE NOCP OLD", "GATE NOCP 100km", "GATE NOCP 50km"];
 
 % Get a list of all files in each folder
 files_cp = dir(strcat(cold_pools{1}, 'wrfout*'));
@@ -25,19 +26,20 @@ files_nocp = dir(strcat(cold_pools{2}, 'wrfout*'));
 files_all = files_cp; % choose the folder with shortest output
 num_files = length(files_cp);
 
-t_length = 30 %num_files;               % Length of the timeseries (usually num files but can be shorter if the heart desires)
+t_length = 46 %num_files;               % Length of the timeseries (usually num files but can be shorter if the heart desires)
 
-% Preallocate arrays for storing the computed values; index 1 is for CP or
-% NOCP
-TKE_out = zeros(2, t_length);
-LWP_out = zeros(2, t_length);
-RAINNC_out = zeros(2, t_length);
-PRECR_out = zeros(2, t_length);
-PRECG_out = zeros(2, t_length);
-CLDFR_out = zeros(2, t_length);
-HFX_out = zeros(2, t_length);
-QT_out = zeros(2, t_length);
-LH_out = zeros(2, t_length);
+% Preallocate arrays for storing the computed values
+
+f_length = length(cold_pools); % Length of folder array 
+TKE_out = zeros(f_length, t_length);
+LWP_out = zeros(f_length, t_length);
+RAINNC_out = zeros(f_length, t_length);
+PRECR_out = zeros(f_length, t_length);
+PRECG_out = zeros(f_length, t_length);
+CLDFR_out = zeros(f_length, t_length);
+HFX_out = zeros(f_length, t_length);
+QT_out = zeros(f_length, t_length);
+LH_out = zeros(f_length, t_length);
 
 TPC_out = zeros(2, 256); % two point correlation function
 
@@ -49,7 +51,7 @@ time_hours = zeros(1, t_length);
 % Loop over the files and cases
 for i = 1:t_length
     
-    for j = 1:2
+    for j = 1:f_length
 
         cp = cold_pools(j);
         fprintf('Filename: %s\n', files_all(i).name);
@@ -58,7 +60,7 @@ for i = 1:t_length
         fname=strcat(cp,file);
         
         % Read in the things we want 
-        try
+%         try
         rainnc = ncread(fname,'RAINNC');
         tke = ncread(fname,'TKE');
         qv=ncread(fname,'QVAPOR');                                         % Water vapor mixing ratio [kg/kg]
@@ -80,16 +82,18 @@ for i = 1:t_length
         qt=qv+qc+qi;                                                       % total water mixing ratio [kg/kg] (no precipitating elements)
 
         QT=mean(reshape(qt,nm,l));                                         % Horizontally average moisture variance
-        QT_out(j, i) = trapz(Z,QT);                                    % Vertically integrate the moisture vairance (compare to Schemann & Seifert, 2017)
-% 
-        catch 
-% 
-        TKE_out(j, i) = -1;
-        RAINNC_out(j, i) = -1;
-        LWP_out(j, i) = -1;                                                                                          
-        QT_out(j, i) = -1; 
-        
-        end
+        QT_out(j, i) = trapz(Z,QT);                                        % Vertically integrate the moisture vairance (compare to Schemann & Seifert, 2017)
+
+        clear rainnc tke qv qc qr qi qs qg % Tidy up as we go 
+
+%         catch 
+% % 
+%         TKE_out(j, i) = -1;
+%         RAINNC_out(j, i) = -1;
+%         LWP_out(j, i) = -1;                                                                                          
+%         QT_out(j, i) = -1; 
+%         
+%         end
 
     end
 
@@ -104,38 +108,42 @@ end
 figure();
 
 subplot(1,3,1);
-plot(time_hours, TKE_out(1, :), 'Linewidth', 1.5); hold on;
-plot(time_hours, TKE_out(2, :), 'Linewidth', 1.5);
+for i=1:length(cold_pools)
+plot(time_hours, TKE_out(i, :), 'Linewidth', 1.5); hold on;
+end
 xlabel('Time [hours]','LineWidth',1.5,'FontSize',15);
 ylabel('VTKE [m^2 s^{-2}]','LineWidth',1.5,'FontSize',15);
-legend('CP', 'NOCP','Location', 'northwest');
+legend(legend_text,'Location', 'northwest');
 title('Vert. integrated TKE', 'LineWidth',1,'FontSize',13, 'FontWeight','Normal');
 
 subplot(1,3,2);
-plot(time_hours, LWP_out(1,:), 'Linewidth', 1.5); hold on;
-plot(time_hours, LWP_out(2,:), 'Linewidth', 1.5);
+for i=1:length(cold_pools)
+plot(time_hours, LWP_out(i,:), 'Linewidth', 1.5); hold on;
+end
 xlabel('Time [hours]','LineWidth',1.5,'FontSize',15);
 ylabel('LWP [kg m^{-2}]','LineWidth',1.5,'FontSize',15);
-legend('CP', 'NOCP', 'Location', 'northwest');
+legend(legend_text, 'Location', 'northwest');
 ylim([45, 60])
 title('Vert. integrated LWP', 'LineWidth',1,'FontSize',13, 'FontWeight','Normal');
 
 subplot(1,3,3);
-plot(time_hours, RAINNC_out(1, :), 'Linewidth', 1.5); hold on;
-plot(time_hours, RAINNC_out(2, :), 'Linewidth', 1.5);
+for i=1:length(cold_pools)
+plot(time_hours, RAINNC_out(i, :), 'Linewidth', 1.5); hold on;
+end
 xlabel('Time [hours]','LineWidth',1.5,'FontSize',15);
 % ylabel(append('RAINNC', ' [', rainnc.Units, ']'),'LineWidth',1.5,'FontSize',15);
 ylabel(append('RAINNC', ' [mm]'),'LineWidth',1.5,'FontSize',15);
 title('Accumulative precipitation', 'LineWidth',1,'FontSize',13, 'FontWeight','Normal');
-legend('CP', 'NOCP', 'Location', 'northwest')
+legend(legend_text, 'Location', 'northwest')
 
 %%
 figure()
-plot(time_hours, QT_out(1, :)*1000, 'Linewidth', 1.5); hold on;
-plot(time_hours, QT_out(2, :)*1000, 'Linewidth', 1.5);
+for i=1:length(cold_pools)
+plot(time_hours, QT_out(i, :)*1000, 'Linewidth', 1.5); hold on;
+end
 xlabel('Time [hours]','LineWidth',1.5,'FontSize',15);
 ylabel('[(g/kg)^2]','LineWidth',1.5,'FontSize',15);
-legend('CP', 'NOCP','Location', 'northwest');
+legend(legend_text,'Location', 'northwest');
 title('Vert. avg. Q_t', 'LineWidth',1,'FontSize',13, 'FontWeight','Normal');
 
 % subplot(2,4,4);

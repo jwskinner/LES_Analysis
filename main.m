@@ -5,17 +5,17 @@
 
 clear variables
 
-%scratch = "/scratch/05999/mkurowsk/"; % For Tacc 
-scratch = "./data/"; % For jacks laptop
+scratch = "/scratch/05999/mkurowsk/"; % For Tacc 
+%scratch = "./data/"; % For jacks laptop
 
-folders = ["./large_domain/CP_OUT/", "./large_domain/NOCP_OUT/"]
+%folders = ["./large_domain/CP_OUT/", "./large_domain/NOCP_OUT/"]
 %folders = ["./GATE_NOCP_int_domain/", "./GATE_CP_int_domain/"];
 %folders = ["ocean_cp/", "ocean_nocp/"]; 
-%folders = ["GATE_CP_CONSTFLX/", "GATE_NOCP_CONSTFLX/"]
+folders = ["GATE_NOCP_CONSTFLX/", "GATE_NOCP_CONSTFLX_100km/", "GATE_NOCP_CONSTFLX_50km/"];
  
 
 % Takes the first folder for loading in params. 
-folder = strcat(scratch, folders(1));  %'./data/large_domain/CP_OUT/' %'/scratch/05999/mkurowsk/ocean_nocp/' on TACC;
+folder = strcat(scratch, folders(3));  %'./data/large_domain/CP_OUT/' %'/scratch/05999/mkurowsk/ocean_nocp/' on TACC;
 output = './plots/';
 
 % Returns a list of all files in the folder
@@ -42,7 +42,7 @@ nam.txt = 'NOCP';
 plot_out = 2;  % 0: Fields, 1: Budgets, 2:LWP, 3:1D profiles, 4: Vertical Structure, 5: KE Spectra
 
 % For creating movies frame by frame
-for i = 16:16 %length(files_all)
+for i = 46:46 %length(files_all)
 
     file = files_all(i).name;
     fname=strcat(folder,file);
@@ -112,7 +112,7 @@ for i = 16:16 %length(files_all)
         titles = {"U", "Potential Temp.", "Temp.", "q_t", "q_c", "TKE", "TKE Hor.", ...
             "Total Water"};
 
-        legendLabels = {"CP", "NOCP"};
+        legendLabels = {"OLD GATE NOCP", "GATE NOCP 100km", "GATE NOCP 50km"};
 
         %% Plot the vertical profiles with lines for each dataset
         plot_1d_profs(params, xlabels, titles, legendLabels, time)
