@@ -1,10 +1,10 @@
 % Script for computing timeseries properties of the convection data
-% Updated by J. W. Skinner (2022-12-14)
+% Updated by J. W. Skinner (2023-30-03)
 
 % Define the folders for each case
 folders = ["./data/small_domain/CP_OUT/", "./data/small_domain/NOCP_OUT/"];
 %folders = ["/scratch/05999/mkurowsk/GATE_NOCP_CONSTFLX/", "/scratch/05999/mkurowsk/GATE_NOCP_CONSTFLX_100km/", "/scratch/05999/mkurowsk/GATE_NOCP_CONSTFLX_50km/"]
-legend_text = ["GATE NOCP OLD", "GATE NOCP 100km", "GATE NOCP 50km"];
+legend_text = ["CP", "NOCP"];
 
 % Get a list of all files in each folder
 files_cp = dir(strcat(folders{1}, 'wrfout*'));
@@ -16,12 +16,14 @@ num_files = length(files_cp);
 % Define constants
 nam = get_constants(strcat(folders(1),files_all(1).name));
 
-t_length = 10; %num_files;                                                 % Length of the timeseries
+t_length = 30; %num_files; % Length of the timeseries
+f_length = length(folders);  % Number of datasets to loop over 
 
 % Preallocate 3D array for storing the computed values
-data = zeros(f_length, t_length, 9);
+data = zeros(f_length, t_length, 12);
 
-% Assign each variable to a slice of the 3D array
+% Pre-assign each variable to a slice of the 3D array (this is more memory
+% efficient than predefining all of these seperately)
 TKE_out = data(:,:,1);
 LWP_out = data(:,:,2);
 RAINNC_out = data(:,:,3);
@@ -31,13 +33,17 @@ CLDFR_out = data(:,:,6);
 HFX_out = data(:,:,7);
 QT_out = data(:,:,8);
 LH_out = data(:,:,9);
+CLWP_out = data(:,:,10);
+RWP_out = data(:,:,11);
+CloudFrac_out = data(:,:,12);
+
 time_hours = zeros(1, t_length);
 
 % Import and calculate vertical structure variables for one of the files
 [Z, p, H] = vert_struct(strcat(folders(1),files_cp(1).name), nam);
 
 % Loop over the files and cases
-parfor i = 1:t_length
+for i = 1:t_length
     
     for j = 1:f_length
         
@@ -54,24 +60,83 @@ parfor i = 1:t_length
         qr = ncread(fname, 'QRAIN');
         qi = ncread(fname, 'QICE');
         qs = ncread(fname, 'QSNOW');
-        qg = ncread(fname, 'QGRAUP');
+        qg = ncread(fname, 'QGRAUP');   
+        th =ncread(fname,'T'  )+nam.T0;                                    % Potential temperature [K]
 
         s=size(tke); n=s(1); m=s(2); l=s(3); nm=n*m;
+        exn=(p/nam.P0).^(nam.R/nam.cp);                                    % exner function
+        qt=qv+qc+qi;                                                       % total water mixing ratio [kg/kg] (no precipitating elements)
+        
+        % Compute the temperatures 
+        t = zeros(size(th)); 
+        tv = zeros(size(th));
+        rho = zeros(size(th)); 
+        for k=1:size(exn)                                                  
+            t(:,:,k) = th(:,:,k).*exn(k);                                  % temperature [k]
+            tv(:,:,k) = t(:,:,k).*(1+0.608*qv(:,:,k));                     % virtual temperature, bouyancy is tv - ql (eq. 1 Marcin)
+            rho=p(k)./(nam.R*tv(:,:,k));                                   % density
+        end                                    
+           
+        % Compute water paths 
+        LWP = trapz(Z',qt.*rho,3);                                         % Liquid water path total                                     
+        CLWP = trapz(Z',qc*1000.*rho,3);                                   % Cloud liquid water path converted to [g/m^-2]
+        RWP = trapz(Z',qr*1000.*rho,3);                                    % Rain water path converted to [g/m^-2]
+
+        % Compute cloud cover
+        qcloud_threshold = 0.001;                                          % Define cloud mixing ratio threshold
+
+        % Create a Cloud Mask 
+        Cmask = qc >= qcloud_threshold;
+        nonzero_ratio = nnz(Cmask) / numel(Cmask);                         % Fraction of grid cells that contain clouds
+        
+        meanCmask = mean(Cmask, 3);                                        % Vertically mean the Cloud Mask to get a 'top down' look
+        cloudCover = nnz(meanCmask) / numel(meanCmask);                    % Cloud cover of the domain looking top down
+
+        % cloud_cover_fraction = nnz(mean(qc, 3) >= qcloud_threshold) / numel(qc); % fraction over the vertical mean
+
+        % Compute mean values adn output from the loop  
         TKE = mean(reshape(tke,nm,l));
-        LWP = mean_LWP(fname, nam);
 
         TKE_out(j, i) = trapz(Z,TKE);
         RAINNC_out(j, i) = mean(rainnc, 'all');
         LWP_out(j, i) = mean(LWP, 'all');
-        
-        qt=qv+qc+qi;
+        CLWP_out(j, i) = mean(CLWP, 'all');
+        RWP_out(j, i) = mean(RWP, 'all');
+        CloudFrac_out(j, i) = cloudCover; 
+
         QT=mean(reshape(qt,nm,l));
         QT_out(j, i) = trapz(Z,QT);
  
     end
 
     time_hours(i) = 0 + (i-1)*nam.dt;
+
 end
+
+%% Image plotting to visually check the cloud fraction thresholding. 
+% figure()
+% subplot(1, 2, 1)
+% imagesc(mean(Cmask, 3))
+% colorbar
+% title("Mean Cloud Mask qc >= 0.001")
+% subplot(1, 2, 2)
+% imagesc(mean(qc, 3))
+% title("Mean Qcloud field")
+% colorbar
+
+%% Output the LWP, CLWP and cloud fraction
+figure(); 
+subplot(3, 1, 1);
+generate_subplot(LWP_out, time_hours,  legend_text, '', 'Liquid Water Path', folders);
+
+% subplot(3, 1, 2);
+% generate_subplot(CLWP_out, time_hours,  legend_text, '', 'Cloud Water Path', folders);
+
+subplot(3, 1, 2);
+generate_subplot(RWP_out, time_hours,  legend_text, '', 'Rain Water Path', folders);
+
+subplot(3, 1, 3);
+generate_subplot(CloudFrac_out, time_hours,  legend_text, '', 'Cloud Fraction', folders);
 
 %%
 figure();
@@ -82,17 +147,19 @@ generate_subplot(TKE_out, time_hours,  legend_text, 'Vert. integrated TKE',...
 
 subplot(1, 3, 2);
 generate_subplot(LWP_out, time_hours, legend_text, 'Vert. integrated LWP', ...
-    'LWP [kg m^{-2}]', folders, [45, 60]);
+    'LWP [kg m^{-2}]', folders, [60, 70]);
 
 subplot(1, 3, 3);
 generate_subplot(RAINNC_out, time_hours, legend_text, ...
     'Accumulative precipitation', 'RAINNC [mm]', folders);
-
+%%
 function generate_subplot(data, time_hours, legend_text, title_text, ...
     y_label, folders, ylim_range)
 
+    cmap = lines(length(folders)+1);
+
     for i = 1:length(folders)
-        plot(time_hours, data(i, :), 'Linewidth', 1.5); 
+        plot(time_hours, data(i, :), 'Color', cmap(i,:), 'Linewidth', 1.5); 
         hold on;
     end
     xlabel('Time [hours]','LineWidth',1.5,'FontSize',15);
@@ -106,7 +173,7 @@ function generate_subplot(data, time_hours, legend_text, title_text, ...
 end
 
 
-%%
+%% -- OLD CODE -- 
 % figure();
 % 
 % subplot(1,3,1);
