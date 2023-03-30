@@ -1,4 +1,4 @@
-function [Z, U, TH, QT, QC, TKE, TKE_HOR, TKE_W, TEMP, TOT_WAT] = oned_profiles(fname, nam)
+function [Z, U, V, W, TH, QT, QC, QR, TKE, TKE_HOR, TKE_W, TEMP, TOT_WAT] = oned_profiles(fname, nam)
 
 %% ========================================================================
 % read all relevant 3-D variables
@@ -61,6 +61,8 @@ qt=qv+qc+qi;                                                               % tot
 
 QT = mean(reshape(qt,nm,l));
 QC = mean(reshape(qc,nm,l));
+QR = mean(reshape(qr,nm,l));
+
 TKE = mean(reshape(tke,nm,l));
 
 qtpr(1,1,:)=QT;

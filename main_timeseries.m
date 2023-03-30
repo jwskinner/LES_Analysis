@@ -50,7 +50,7 @@ for i = 1:t_length
         cp = folders(j);
         fprintf('Filename: %s\n', files_all(i).name);
         file = files_all(i).name;
-        fname=strcat(cp,file)
+        fname=strcat(cp,file);
 
         % Read in the things we want, make a combined ncread call for speed 
         rainnc = ncread(fname, 'RAINNC');

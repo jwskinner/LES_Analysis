@@ -12,28 +12,31 @@ function plot_1d_profs(params, xlabels, titles, legendLabels, time)
 
     Z = params{size(params,2)};
 
-    xlimits = zeros(8, 2);
-    xlimits(1,:) = [-2, 2];
-    xlimits(2,:) = [290, 360];
-    xlimits(3,:) = [200,300];
-    xlimits(4,:) = [0, 18];
-    xlimits(5,:) = [0, 0.2];
-    xlimits(6,:) = [0, 0.2];
-    xlimits(7,:) = [0, 1];
-    xlimits(8,:) = [0, 10^7];
+    xlimits = zeros(10, 2);
+    xlimits(1,:) = [-1.5, 0.5];
+    xlimits(2,:) = [-0.1, 0.1];
+    xlimits(3,:) = [-0.001, 0.001];
+    xlimits(4,:) = [-0.1, 0.1];
+    xlimits(5,:) = [-0.1, 0.3];
+    xlimits(6,:) = [290,360];
+    xlimits(7,:) = [190, 300]; 
+    xlimits(8,:) = [0, 18];
+    xlimits(9,:) = [0, 1];
+    xlimits(10,:) = [0, 1];
+    %xlimits(10,:) = [0, 10^7];
 
-    ylimits = [0,6];
+    ylimits = [0,12];
 
-    for i = 1:8
-        subplot(2,4,i);
+    for i = 1:(size(params, 2)-1) % removes the Z variable from the sizing
+        subplot(2,5,i);
         for j = 1:size(params{i}, 1) % Loops over lines to plot
             P(i) = plot(params{i}(j,:), Z/10^3, 'LineWidth', 2); ...
                 hold on; grid on;
         end
         legend(legendLabels, 'Location', 'best')
-        xlabel(xlabels{i})
-        ylabel('Height [km]')
-        title(titles{i},'FontWeight','Normal')
+        xlabel(xlabels{i},'Interpreter','latex')
+        ylabel('$z$ [km]','Interpreter','latex')
+        title(titles{i},'FontWeight','Normal','Interpreter','latex')
         xlim([xlimits(i,1), xlimits(i,2)])
         ylim(ylimits)
     end
