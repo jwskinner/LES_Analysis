@@ -4,11 +4,11 @@
 % last modified: 7/03/2023
 clear all 
 
-index = 10; % file number to plot 
+index = 97; % file number to plot 
 z = 1; % vertical level to plot 
 
-folders = ["./data/large_domain/CP_OUT/", "./data/large_domain/NOCP_OUT/"];
-%folders = ["/scratch/05999/mkurowsk/GATE_NOCP_CONSTFLX/", "/scratch/05999/mkurowsk/GATE_CP_CONSTFLX/"]
+%folders = ["./data/large_domain/CP_OUT/", "./data/large_domain/NOCP_OUT/"];
+folders = ["/scratch/05999/mkurowsk/GATE_NOCP_CONSTFLX/", "/scratch/05999/mkurowsk/GATE_CP_CONSTFLX/"]
 
 % Import the file 
 files_all = dir(strcat(folders(1), 'wrfout*'));

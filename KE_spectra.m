@@ -13,7 +13,7 @@
 %
 % [This is still a rough/unfinished script!]
 
-loc_cp = "./data/GATE_CP_int_domain/wrfout_d01_2020-01-03_00:30:00";
+loc_cp = "/scratch/05999/mkurowsk/GATE_NOCP_CONSTFLX/wrfout_d01_2020-01-03_00:00:00";
 % loc_cp = "./data/large_domain/CP_OUT/wrfout_d01_2020-01-01_18:00:00";
 % loc_cp = "./data/small_domain/CP_OUT/wrfout_d01_0001-01-01_15:00:00";
 

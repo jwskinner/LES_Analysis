@@ -17,11 +17,11 @@ function plot_1d_profs(params, xlabels, titles, legendLabels, time)
     xlimits(2,:) = [-0.1, 0.1];
     xlimits(3,:) = [-0.001, 0.001];
     xlimits(4,:) = [-0.1, 0.1];
-    xlimits(5,:) = [-0.1, 0.3];
+    xlimits(5,:) = [-0.1, 0.5];
     xlimits(6,:) = [290,360];
     xlimits(7,:) = [190, 300]; 
     xlimits(8,:) = [0, 18];
-    xlimits(9,:) = [0, 0.025];
+    xlimits(9,:) = [0, 0.05];
     xlimits(10,:) = [0, 0.025];
     xlimits (11,:) = [0, 0.01]; 
     xlimits(12,:) = [0, 10^7];
