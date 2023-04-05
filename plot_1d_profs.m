@@ -21,14 +21,15 @@ function plot_1d_profs(params, xlabels, titles, legendLabels, time)
     xlimits(6,:) = [290,360];
     xlimits(7,:) = [190, 300]; 
     xlimits(8,:) = [0, 18];
-    xlimits(9,:) = [0, 1];
-    xlimits(10,:) = [0, 1];
-    %xlimits(10,:) = [0, 10^7];
+    xlimits(9,:) = [0, 0.025];
+    xlimits(10,:) = [0, 0.025];
+    xlimits (11,:) = [0, 0.01]; 
+    xlimits(12,:) = [0, 10^7];
 
     ylimits = [0,12];
 
     for i = 1:(size(params, 2)-1) % removes the Z variable from the sizing
-        subplot(2,5,i);
+        subplot(2,6,i);
         for j = 1:size(params{i}, 1) % Loops over lines to plot
             P(i) = plot(params{i}(j,:), Z/10^3, 'LineWidth', 2); ...
                 hold on; grid on;

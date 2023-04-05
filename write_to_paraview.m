@@ -3,7 +3,8 @@
 % model output file and formats it for paraview for 3D visualisation
 % There is now a time loop for bringing in the time evolving data 
 
-folder = "./data/GATE_CP_int_domain/"; 
+folder = "./data/small_domain/CP_OUT/"; % Input folder 
+p_out = './data/paraview_GATE_cp.nc';   % Output filename
 
 % Returns a list of all files in the folder
 files_all = dir(strcat(folder, 'wrfout*')); 
@@ -30,9 +31,10 @@ qt_out = zeros(nam.nx-1, nam.ny, nam.levs, time);
 thil_out = zeros(nam.nx-1, nam.ny, nam.levs, time);
 u_out = zeros(nam.nx-1, nam.ny, nam.levs, time);
 vor_out = zeros(nam.nx-1, nam.ny, nam.levs, time);
+qc_out = zeros(nam.nx-1, nam.ny, nam.levs, time);
 time_out = zeros(time, 1); 
 
-for i = 12:12
+for i = 1:time
 
 fname=strcat(folder,files_all(i).name)
 
@@ -109,12 +111,13 @@ thil_out(:,:,:,i) = thil;
 qt_out(:,:,:,i) = qt; 
 time_out(i) = (i - 1)*nam.dt; 
 vor_out(:,:,:,i) = vor_mag; 
+qc_out(:,:,:,i) = qc; 
 
 end
 
 %% Create the netcdf for paraview of the variables above
 %create the netcdf file
-p_out = './data/paraview_GATE_cp.nc'; % Put the paraview variables in data so they don't sync to git
+% Put the paraview variables in data so they don't sync to git
 ncid = netcdf.create(p_out,'NETCDF4'); 
 
 % define dimensions
@@ -127,6 +130,7 @@ time_dimid = netcdf.defDim(ncid,'time',size(u_out, 4));
 u_varid = netcdf.defVar(ncid,'u','double',[nx_dimid,ny_dimid,levs_dimid, time_dimid]);
 thil_varid = netcdf.defVar(ncid,'thil','double',[nx_dimid,ny_dimid,levs_dimid, time_dimid]);
 qt_varid = netcdf.defVar(ncid,'qt','double',[nx_dimid,ny_dimid,levs_dimid, time_dimid]);
+qc_varid = netcdf.defVar(ncid,'qc','double',[nx_dimid,ny_dimid,levs_dimid, time_dimid]);
 vor_varid = netcdf.defVar(ncid,'vor','double',[nx_dimid,ny_dimid,levs_dimid, time_dimid]);
 
 % add attribute metadata
@@ -145,6 +149,7 @@ netcdf.endDef(ncid);
 netcdf.putVar(ncid, u_varid, u_out);
 netcdf.putVar(ncid, thil_varid, thil_out);
 netcdf.putVar(ncid, qt_varid, qt_out);
+netcdf.putVar(ncid, qc_varid, qc_out);
 netcdf.putVar(ncid,vor_varid, vor_out);
 netcdf.putVar(ncid, time_varid, time_out);
 
