@@ -38,7 +38,7 @@ for i = 1:length(files)
 
     qv=ncread(fname,'QVAPOR');                                                 % Water vapor mixing ratio [kg/kg]
     qc=ncread(fname,'QCLOUD');                                                 % Cloud water mixing ratio [kg/kg]
-    %qr=ncread(fname,'QRAIN');                                                 % Rain water mixing ratio [kg/kg]
+    qr=ncread(fname,'QRAIN');                                                  % Rain water mixing ratio [kg/kg]
     qi=ncread(fname,'QICE');                                                   % Ice mixing ratio [kg/kg]
 
     %%
@@ -59,11 +59,15 @@ for i = 1:length(files)
     exn=(p/nam.P0).^(nam.R/nam.cp);                                            % exner function
     qt=qv+qc+qi;                                                               % total water mixing ratio [kg/kg] (no precipitating elements)
 
+    ql = qr + qc; %liquid water in the system
+
     t=th.*exn;                                                                 % temperature
     tv=t.*(1+0.608*qv);                                                        % virtual temperature, bouyancy is tv - ql (eq. 1 Marcin)
     rho=p./(nam.R*tv);                                                         % density
 
-    qtrho = qt.*rho;
+    % Total water LWP
+    %qtrho = qt.*rho;
+    qtrho = ql.*rho; % Just the liquids
 
     LWP = trapz(Z',qtrho,3);                                                   % vertically integrated LWP
 
@@ -82,8 +86,8 @@ for i = 1:length(files)
 
     % Create colorbar
     c = colorbar;
-    caxis([50 60]); % set the color limits
-    c.Label.String = 'LWP'; % add a label to the colorbar
+    caxis([0 1]); % set the color limits
+    c.Label.String = 'LWP*'; % add a label to the colorbar
 
     xlim([min(x_km) max(x_km)])
     ylim([min(y_km) max(y_km)])
