@@ -61,7 +61,7 @@ tv=t.*(1+0.608*qv);                                                        % vir
 thil=th-(nam.Ll*qc+nam.Li*qi)./(nam.cp*exn);                               % liquid water potential temperature
 
 rho=p./(nam.R*tv);              % density
-RHO=mean(reshape(thil,nm,l));
+RHO=mean(reshape(rho,nm,l));
 
 %% Jack Old plots for diagnostics 
 

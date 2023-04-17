@@ -5,16 +5,16 @@
 
 clear variables
 
-%scratch = "/scratch/05999/mkurowsk/"; % For Tacc 
+%scratch = "/scratch/05999/mkurowsk/"; % For Tacc
 scratch = "./data/"; % For jacks laptop
 
-folders = ["./large_domain/CP_OUT/", "./large_domain/NOCP_OUT/"]
+folders = ["./small_domain/CP_OUT/", "./small_domain/NOCP_OUT/"]
 %folders = ["./GATE_NOCP_int_domain/", "./GATE_CP_int_domain/"];
-%folders = ["ocean_cp/", "ocean_nocp/"]; 
+%folders = ["ocean_cp/", "ocean_nocp/"];
 %folders = ["GATE_NOCP_CONSTFLX/", "GATE_NOCP_CONSTFLX_100km/", "GATE_NOCP_CONSTFLX_50km/"];
- 
 
-% Takes the first folder for loading in params. 
+
+% Takes the first folder for loading in params.
 folder = strcat(scratch, folders(2));  %'./data/large_domain/CP_OUT/' %'/scratch/05999/mkurowsk/ocean_nocp/' on TACC;
 output = './plots/';
 
@@ -39,7 +39,7 @@ nam.ny = size(ncread(sample_file,'U'), 2);                                 % Num
 nam.txt = 'NOCP';
 
 % Plot diagnostic
-plot_out = 3;  % 0: Fields, 1: Budgets, 2:LWP, 3:1D profiles, 4: Vertical Structure, 5: KE Spectra
+plot_out = 1;  % 0: Fields, 1: Budgets, 2:LWP, 3:1D profiles, 4: Vertical Structure, 5: KE Spectra
 
 % For creating movies frame by frame
 for i = 16:16 %length(files_all)
@@ -50,11 +50,11 @@ for i = 16:16 %length(files_all)
     % Sets up the paramters for the plotting
     fprintf('Filename: %s\n', files_all(i).name);
 
-    time = (i-1)*nam.dt; 
+    time = (i-1)*nam.dt;
 
     %% -- Compute and plot files frame by frame into a movie --
     if plot_out == 0
-  
+
         params.time = time;
         params.name = file;
         params.save_folder = append(output, variable.Name, '/');
@@ -62,7 +62,7 @@ for i = 16:16 %length(files_all)
         % Load the data
         [variable] = loadNetCDF(fname, 'HFX');
 
-        % Paramters specific to this plot 
+        % Paramters specific to this plot
         params.cmax = 40;
         params.cmin = 0;
         params.save_movie = txt;                                           % Output a movie and name it CP or NOCP
@@ -71,15 +71,15 @@ for i = 16:16 %length(files_all)
 
     %% -- Plot Budget Terms --
 
-    if plot_out == 1 
+    if plot_out == 1
         plot_budget_terms(file, folder, nam, output, i)
     end
 
     %% -- Compute and plot LWP --
 
     if plot_out == 2
-        params.output = output; 
-        params.time = time;     
+        params.output = output;
+        params.time = time;
         params.export = 'mov';                                             % export as 'frames' or 'movie'.
         plot_lwp(file, folder, nam, params)
     end
@@ -106,13 +106,27 @@ for i = 16:16 %length(files_all)
         %% Setup the plots for the profiles
         params = {U, V, W, TKE, TKE_HOR, TH, TEMP, QT*1000, QC*1000, ...
             QR*1000, CLD_FRC, TOT_WAT, Z}; % converted Qt and Qc to [g/kg] from [kg/kg]
-        
-        xlabels = {"$\langle u \rangle$ (ms$^{-1}$)", ... 
+
+        xlimits = zeros(10, 2);
+        xlimits(1,:) = [-1.5, 0.5];
+        xlimits(2,:) = [-0.1, 0.1];
+        xlimits(3,:) = [-0.001, 0.001];
+        xlimits(4,:) = [-0.1, 0.1];
+        xlimits(5,:) = [-0.1, 0.5];
+        xlimits(6,:) = [290,360];
+        xlimits(7,:) = [190, 300];
+        xlimits(8,:) = [0, 18];
+        xlimits(9,:) = [0, 0.05];
+        xlimits(10,:) = [0, 0.025];
+        xlimits (11,:) = [0, 0.01];
+        xlimits(12,:) = [0, 10^7];
+
+        xlabels = {"$\langle u \rangle$ (ms$^{-1}$)", ...
             "$\langle v \rangle$ (ms$^{-1}$)", ...
             "$\langle w \rangle$ (ms$^{-1}$)", ...
             "TKE (m$^2$s$^{-2}$)", ...
             "$1/2(u'^2+v'^2)$ (m$^2$s$^{-2}$)", ...
-            "$\langle \theta \rangle$ (K)", ... 
+            "$\langle \theta \rangle$ (K)", ...
             "T (K)", ...
             "$\langle q_t \rangle$ (g/kg)", ...
             "$\langle q_c \rangle$ (g/kg)", ...
@@ -126,8 +140,8 @@ for i = 16:16 %length(files_all)
             "TKE", ...
             "TKE Horizontal", ...
             "$\langle \theta \rangle$", ...
-            "$\langle T \rangle $", ... 
-            "$\langle q_t \rangle $", ... 
+            "$\langle T \rangle $", ...
+            "$\langle q_t \rangle $", ...
             "$\langle q_c \rangle$", ...
             "$\langle q_r \rangle$", ...
             "Cloud Fraction", ...
@@ -136,7 +150,7 @@ for i = 16:16 %length(files_all)
         legendLabels = {"OLD GATE NOCP", "GATE NOCP 100km"};
 
         %% Plot the vertical profiles with lines for each dataset
-        plot_1d_profs(params, xlabels, titles, legendLabels, time)
+        plot_1d_profs(params, xlabels, titles, legendLabels, xlimits, time)
     end
 
 
@@ -176,7 +190,7 @@ for i = 16:16 %length(files_all)
 
     %% -- Plot Spectra --
 
-    if plot_out == 5 
+    if plot_out == 5
 
         % Computes 2D kinetic energy spectra at specified height, z
         z = 1;
