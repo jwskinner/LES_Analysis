@@ -2,15 +2,17 @@
 % This is a simpler script for plotting the CKE budgets from kardunov and
 % randall paper
 
-folder = "/Users/jwskinner/Desktop/LES Analysis/data/large_domain/NOCP_OUT/"
+addpath('../cmocean-main/')
 
-%fname = "/Volumes/Fortress L3/WRF_Data/int_domain/GATE_NOCP/wrfout_d01_2020-01-01_16:00:00";
+% folder = "/Users/jwskinner/Desktop/LES Analysis/data/large_domain/NOCP_OUT/"
+folder = "/scratch/05999/mkurowsk/GATE_CP_CONSTFLX/"
 
-time = 16.5; % time in hours form the filename
 
-%files = [13, 25];
-files = [4, 7, 13, 16]
-time = [6, 12, 24, 30];
+files = [13, 49, 97];
+%files = [96,118];
+%files = [4, 7, 13, 16]
+time = [6, 24, 48];
+%time = [48, 58];
 
 files_all = dir(strcat(folder, 'wrfout*'));
 
@@ -76,23 +78,26 @@ for i = 1:length(files)
 
     %% Plot Liquid Water Path
 
-    subplot(1, 4, i); % add this line to specify the subplot
+    subplot(1, 3, i); % add this line to specify the subplot
+
+    cmap = cmocean('rain');
 
     imagesc(x_km, y_km, LWP); % use imagesc instead of image to use the logarithmic scale
     set(gca, 'YDir', 'normal'); % flip the y-axis to match the image orientation
-    ylabel('y [km]','LineWidth',1,'FontSize',14);
-    xlabel('x [km]','LineWidth',1,'FontSize',14);
+    ylabel('$y$ [km]','LineWidth',1,'FontSize',14, 'Interpreter','latex');
+    xlabel('$x$ [km]','LineWidth',1,'FontSize',14, 'Interpreter','latex');
     title(num2str(time(i),'%.1f')+" hours")
+    colormap(cmap)
 
     % Create colorbar
     c = colorbar;
     caxis([0 1]); % set the color limits
-    c.Label.String = 'LWP*'; % add a label to the colorbar
+    c.Label.String = 'LWP'; % add a label to the colorbar
 
     xlim([min(x_km) max(x_km)])
     ylim([min(y_km) max(y_km)])
     set(gca, 'DataAspectRatio', [1 1 1]);
 
-    grid on
+    grid off
 
 end

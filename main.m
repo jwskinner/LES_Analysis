@@ -5,17 +5,17 @@
 
 clear variables
 
-%scratch = "/scratch/05999/mkurowsk/"; % For Tacc
-scratch = "./data/"; % For jacks laptop
+scratch = "/scratch/05999/mkurowsk/"; % For Tacc
+%scratch = "./data/"; % For jacks laptop
 
-folders = ["./small_domain/CP_OUT/", "./small_domain/NOCP_OUT/"]
+% folders = ["./small_domain/CP_OUT/", "./small_domain/NOCP_OUT/"]
 %folders = ["./GATE_NOCP_int_domain/", "./GATE_CP_int_domain/"];
 %folders = ["ocean_cp/", "ocean_nocp/"];
-%folders = ["GATE_NOCP_CONSTFLX/", "GATE_NOCP_CONSTFLX_100km/", "GATE_NOCP_CONSTFLX_50km/"];
-
+% folders = ["GATE_NOEVP1km_CONSTFLX_50km/", "GATE_NOEVP1.3km_CONSTFLX_100km/", "GATE_NOEVP1km_CONSTFLX_100km/"];
+folders = ["GATE_NOEVP1km_CONSTFLX_50km/"];
 
 % Takes the first folder for loading in params.
-folder = strcat(scratch, folders(2));  %'./data/large_domain/CP_OUT/' %'/scratch/05999/mkurowsk/ocean_nocp/' on TACC;
+folder = strcat(scratch, folders(1));  %'./data/large_domain/CP_OUT/' %'/scratch/05999/mkurowsk/ocean_nocp/' on TACC;
 output = './plots/';
 
 % Returns a list of all files in the folder
@@ -39,10 +39,10 @@ nam.ny = size(ncread(sample_file,'U'), 2);                                 % Num
 nam.txt = 'NOCP';
 
 % Plot diagnostic
-plot_out = 1;  % 0: Fields, 1: Budgets, 2:LWP, 3:1D profiles, 4: Vertical Structure, 5: KE Spectra
+plot_out = 3;  % 0: Fields, 1: Budgets, 2:LWP, 3:1D profiles, 4: Vertical Structure, 5: KE Spectra
 
 % For creating movies frame by frame
-for i = 16:16 %length(files_all)
+for i = 1:103 %length(files_all)
 
     file = files_all(i).name;
     fname=strcat(folder,file);
@@ -57,16 +57,18 @@ for i = 16:16 %length(files_all)
 
         params.time = time;
         params.name = file;
-        params.save_folder = append(output, variable.Name, '/');
+        params.absum = 0;
 
         % Load the data
-        [variable] = loadNetCDF(fname, 'HFX');
+        [variable, variable_u, variable_v, variable_qc] = loadNetCDF(fname, 'W', 'U', 'V', 'QSNOW');
+        params.save_folder = append(output, variable.Name, '/');
 
         % Paramters specific to this plot
-        params.cmax = 40;
-        params.cmin = 0;
-        params.save_movie = txt;                                           % Output a movie and name it CP or NOCP
-        plot_fields(variable, nam, params)
+        params.cmax = 100; %max(variable.Data(:));
+        params.cmin = 0;% min(variable.Data(:));
+        params.autoscale = 'True';
+        params.save_movie = nam.txt;                                       % Output a movie and name it CP or NOCP
+        plot_fields(variable_u, variable_v, variable, variable_qc, nam, params)
     end
 
     %% -- Plot Budget Terms --

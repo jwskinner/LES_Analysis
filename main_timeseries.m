@@ -2,9 +2,10 @@
 % Updated by J. W. Skinner (2023-30-03)
 
 % Define the folders for each case
-folders = ["./data/small_domain/CP_OUT/", "./data/small_domain/NOCP_OUT/"];
+% folders = ["./data/small_domain/CP_OUT/", "./data/small_domain/NOCP_OUT/"];
 %folders = ["/scratch/05999/mkurowsk/GATE_NOCP_CONSTFLX/", "/scratch/05999/mkurowsk/GATE_NOCP_CONSTFLX_100km/", "/scratch/05999/mkurowsk/GATE_NOCP_CONSTFLX_50km/"]
-legend_text = ["CP", "NOCP"];
+legend_text = ["NOEVP1", "NOEVP1.3", "GATE NOCP CONSTFLX"];
+folders = ["/scratch/05999/mkurowsk/GATE_NOEVP1km_CONSTFLX_50km/","/scratch/05999/mkurowsk/GATE_NOEVP1.3km_CONSTFLX_50km/", "/scratch/05999/mkurowsk/GATE_NOCP_CONSTFLX_50km/"]; 
 
 % Get a list of all files in each folder
 files_cp = dir(strcat(folders{1}, 'wrfout*'));
@@ -16,11 +17,11 @@ num_files = length(files_cp);
 % Define constants
 nam = get_constants(strcat(folders(1),files_all(1).name));
 
-t_length = 30; %num_files; % Length of the timeseries
+t_length = 100 %num_files; % Length of the timeseries
 f_length = length(folders);  % Number of datasets to loop over 
 
 % Preallocate 3D array for storing the computed values
-data = zeros(f_length, t_length, 12);
+data = zeros(f_length, t_length, 15);
 
 % Pre-assign each variable to a slice of the 3D array (this is more memory
 % efficient than predefining all of these seperately)
@@ -36,6 +37,9 @@ LH_out = data(:,:,9);
 CLWP_out = data(:,:,10);
 RWP_out = data(:,:,11);
 CloudFrac_out = data(:,:,12);
+maxu_out = data(:,:, 13);
+maxv_out = data(:,:,14); 
+maxw_out = data(:,:,15);
 
 time_hours = zeros(1, t_length);
 
@@ -43,7 +47,7 @@ time_hours = zeros(1, t_length);
 [Z, p, H] = vert_struct(strcat(folders(1),files_cp(1).name), nam);
 
 % Loop over the files and cases
-for i = 1:t_length
+parfor i = 1:t_length
     
     for j = 1:f_length
         
@@ -62,6 +66,9 @@ for i = 1:t_length
         qs = ncread(fname, 'QSNOW');
         qg = ncread(fname, 'QGRAUP');   
         th =ncread(fname,'T'  )+nam.T0;                                    % Potential temperature [K]
+        u = ncread(fname, 'U');
+        v = ncread(fname, 'V');
+        w = ncread(fname, 'W');
 
         s=size(tke); n=s(1); m=s(2); l=s(3); nm=n*m;
         exn=(p/nam.P0).^(nam.R/nam.cp);                                    % exner function
@@ -106,6 +113,10 @@ for i = 1:t_length
 
         QT=mean(reshape(qt,nm,l));
         QT_out(j, i) = trapz(Z,QT);
+
+        maxu_out(j, i) = max(u(:)); 
+        maxv_out(j, i) = max(v(:));
+        maxw_out(j, i) = min(w(:));
  
     end
 
@@ -152,6 +163,21 @@ generate_subplot(LWP_out, time_hours, legend_text, 'Vert. integrated LWP', ...
 subplot(1, 3, 3);
 generate_subplot(RAINNC_out, time_hours, legend_text, ...
     'Accumulative precipitation', 'RAINNC [mm]', folders);
+
+figure();
+
+subplot(1, 3, 1);
+generate_subplot(maxu_out, time_hours,  legend_text, 'Max(u)',...
+    'Max(u) [m s^{-1}]', folders);
+
+subplot(1, 3, 2);
+generate_subplot(maxv_out, time_hours, legend_text, 'Max(v)', ...
+    'Max(v) [m s^{-1}]', folders);
+
+subplot(1, 3, 3);
+generate_subplot(maxw_out, time_hours, legend_text, ...
+    'Min(w)', 'Min(w) [m s^{-1}]', folders);
+
 %%
 function generate_subplot(data, time_hours, legend_text, title_text, ...
     y_label, folders, ylim_range)

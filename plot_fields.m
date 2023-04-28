@@ -3,12 +3,12 @@
 
 function plot_fields(varargin)
 
-    n = nargin-2;
-    nam = varargin{n + 1};
-    params = varargin{n + 2};
+    nar = nargin-2;
+    nam = varargin{nar + 1};
+    params = varargin{nar + 2};
 
-    subplot_row = ceil(n/5); 
-    subplot_col = mod(n-1,5)+1; 
+    subplot_row = ceil(nar/5); 
+    subplot_col = mod(nar-1,5)+1; 
 
     % Get the screen size
     scrsz = get(0,'ScreenSize');
@@ -17,15 +17,31 @@ function plot_fields(varargin)
     clear figure
     figure('Position', [0 0 scrsz(3)*0.5 scrsz(3)*0.5]);
     
-    for i = 1:n
+    for i = 1:nar
         data = varargin{i}.Data;
 
-        s=size(data);n=s(1); n=s(1); m=s(2); nm=n*m;
-        if isfield(params, 'mean')
-            l=s(3); 
-            data = mean(reshape(data,nm,l)); 
+        s=size(data);n=s(1); m=s(2); nm=n*m;
+
+        if isfield(params, 'mean') 
+            data = mean(data, 3); % Mean over the vertical 
+        end 
+
+        if isfield(params, 'sum') 
+            data = sum(data, 3); % Mean over the vertical 
+        end 
+
+        if isfield(params, 'absum') 
+            data = sum(abs(data), 3); % Mean over the vertical 
+        end 
+
+        if isfield(params, 'autoscale')
+            params.cmax = max(data(:));
+            params.cmin = min(data(:));
         end 
         
+        
+        size(data)
+
         x_km = linspace(0, (n*nam.dx)/1000, n);
         y_km = linspace(0, (n*nam.dy)/1000, n);
 

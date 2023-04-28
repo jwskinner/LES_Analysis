@@ -3,8 +3,9 @@
 % model output file and formats it for paraview for 3D visualisation
 % There is now a time loop for bringing in the time evolving data 
 
-folder = "./data/small_domain/CP_OUT/"; % Input folder 
-p_out = './data/paraview_GATE_cp.nc';   % Output filename
+folder = "./data/small_domain/CP_OUT/"; % Input folder
+folder = "/scratch/05999/mkurowsk/GATE_NOEVP1km_CONSTFLX_50km/"
+p_out = './GATE_NOEVP1km_CONSTFLX_50km.nc';   % Output filename
 
 % Returns a list of all files in the folder
 files_all = dir(strcat(folder, 'wrfout*')); 
@@ -26,7 +27,7 @@ nam.ny = size(ncread(fname,'U'), 2);                                       % Num
 nam.dx=double(ncreadatt(fname,'/','DX'));                                  % [m]
 nam.dy=double(ncreadatt(fname,'/','DY'));                                  % [m]
 
-time = length(files_all); 
+time = 21; %length(files_all); 
 qt_out = zeros(nam.nx-1, nam.ny, nam.levs, time);
 thil_out = zeros(nam.nx-1, nam.ny, nam.levs, time);
 u_out = zeros(nam.nx-1, nam.ny, nam.levs, time);
@@ -34,7 +35,7 @@ vor_out = zeros(nam.nx-1, nam.ny, nam.levs, time);
 qc_out = zeros(nam.nx-1, nam.ny, nam.levs, time);
 time_out = zeros(time, 1); 
 
-for i = 1:time
+for i = 60:80
 
 fname=strcat(folder,files_all(i).name)
 
