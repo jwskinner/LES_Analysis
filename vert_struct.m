@@ -1,4 +1,4 @@
-function [Z, P, H] = vert_struct(fname, nam)
+function [Z, P, H, p, exn] = vert_struct(fname, nam)
 
     ph =ncread(fname,'PH' );                                               % geopotential perturbation [m2/s2]
     phb=ncread(fname,'PHB');                                               % base geopotential [m2/s2)

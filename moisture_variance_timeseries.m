@@ -1,20 +1,21 @@
 % Script for computing moisture variance timeseries and timeseries of the
 % budget terms (to be added later on)
 %
-% [Warning: This is an early draft script!]
+% [Warning: This is an old script now]
 %
 % Updated by J. W. Skinner (2023-28-02)
 
 % Define the folders for each case
-cold_pools = ["./data/small_domain/CP_OUT/", "./data/small_domain/NOCP_OUT/"];
+%cold_pools = ["./data/small_domain/CP_OUT/", "./data/small_domain/NOCP_OUT/"];
 %cold_pools = ["/scratch/05999/mkurowsk/GATE_NOCP_CONSTFLX/", "/scratch/05999/mkurowsk/GATE_NOCP_CONSTFLX/"]
+cold_pools = ["/data1/jwskinner/GATE_CP_CONSTFLX/", "/data1/jwskinner/GATE_NOEVP1.3km_CONSTFLX_100km/"];
 
 % Get a list of all files in each folder
 files_cp = dir(strcat(cold_pools{1}, 'wrfout*'));
 files_nocp = dir(strcat(cold_pools{2}, 'wrfout*'));
 
 files_all = files_cp; % choose the folder with shortest output
-sample_file = strcat(cold_pools{1},files_all(1).name);                            % File for loading in all the numerical parameters of the simulation
+sample_file = strcat(cold_pools{1},files_all(1).name);                     % File for loading in all the numerical parameters of the simulation
 
 
 % Setup physical and numerical constants
@@ -49,7 +50,7 @@ time_hours = zeros(1, num_files);
 [Z, p, H] = vert_struct(strcat(cold_pools(1),files_cp(1).name), nam);
 
 % Loop over the files and cases
-parfor i = 1:10 %num_files-1
+parfor i = 1: 98%snum_files-1
 
     for j = 1:2
 
@@ -65,7 +66,6 @@ parfor i = 1:10 %num_files-1
 
         [u, v, w] = loadNetCDF(fname, 'U', 'V', 'W');
         u = u.Data; v = v.Data; w = w.Data;
-
         u=0.5*(u(1:end-1,:,:,:)+u(2:end,:,:,:)); %C->A grid
         v=0.5*(v(:,1:end-1,:,:)+v(:,2:end,:,:));
         w=0.5*(w(:,:,1:end-1,:)+w(:,:,2:end,:));
@@ -178,39 +178,40 @@ figure();
 % subplot(1,2,2);
 
 % colors = {'blue', [0 0.5 0], 'blue', [1 0.5 0]};
+colors = {'#0072BD', '#A2142F', '#EDB120', '#77AC30', '#000000'}; 
 
 subplot(1,2,1)
-plot(time_hours, prod_out(1,:)/prod_out(1,2), 'Linewidth', 1.5); hold on;
-plot(time_hours, turb_out(1,:)/turb_out(1,2), 'Linewidth', 1.5); hold on;
+plot(time_hours, prod_out(1,:)/prod_out(1,2), 'Linewidth', 1.5, 'Color',colors{1}); hold on;
+plot(time_hours, turb_out(1,:)/turb_out(1,2), 'Linewidth', 1.5, 'Color',colors{2}); hold on;
 % plot(time_hours, turb_out(2,:)/turb_out(2,2), 'Linewidth', 1.5, 'Color', colors{1}, 'linestyle','--');
-plot(time_hours, micro_out(1,:)/micro_out(1,2), 'Linewidth', 1.5); hold on;
+plot(time_hours, micro_out(1,:)/micro_out(1,2), 'Linewidth', 1.5, 'Color',colors{3}); hold on;
 % plot(time_hours, micro_out(2,:)/micro_out(2,2), 'Linewidth', 1.5, 'Color', colors{2}, 'linestyle','--');
 % plot(time_hours, prod_out(2,:)/prod_out(2,2), 'Linewidth', 1.5, 'Color', colors{3}, 'linestyle','--');
-plot(time_hours, diss_out(1,:)/diss_out(1,2), 'Linewidth', 1.5); hold on;
+plot(time_hours, diss_out(1,:)/diss_out(1,2), 'Linewidth', 1.5, 'Color',colors{4}); hold on;
 % plot(time_hours, diss_out(2,:)/diss_out(2,2), 'Linewidth', 1.5, 'Color', colors{4}, 'linestyle','--');
 
 xlabel('Time [hours]','LineWidth',1.5,'FontSize',15);
 set(gca, 'YScale', 'log')
 ylabel('Norm. Magnitude','LineWidth',1.5,'FontSize',15);
-legend('TURB. CP', 'MICRO. CP', 'PROD. CP', 'DISS. CP');
-title('Vert. Avg. Budget Terms', 'LineWidth',1,'FontSize',13, 'FontWeight','Normal');
+legend('PROD', 'TURB', 'SRC', 'DISS');
+title('CP Vert. Avg. Budgets', 'LineWidth',1,'FontSize',13, 'FontWeight','Normal');
 
 subplot(1,2,2)
 % plot(time_hours, turb_out(1,:)/turb_out(1,2), 'Linewidth', 1.5, 'Color', colors{1}); hold on;
-plot(time_hours, prod_out(2,:)/prod_out(2,2), 'Linewidth', 1.5, 'linestyle','-');hold on
-plot(time_hours, turb_out(2,:)/turb_out(2,2), 'Linewidth', 1.5, 'linestyle','-');hold on
+plot(time_hours, prod_out(2,:)/prod_out(2,2), 'Linewidth', 1.5, 'Color',colors{1}, 'linestyle','-');hold on
+plot(time_hours, turb_out(2,:)/turb_out(2,2), 'Linewidth', 1.5, 'Color',colors{2}, 'linestyle','-');hold on
 % plot(time_hours, micro_out(1,:)/micro_out(1,2), 'Linewidth', 1.5, 'Color', colors{2}); hold on;
-plot(time_hours, micro_out(2,:)/micro_out(2,2), 'Linewidth', 1.5, 'linestyle','-');hold on
+plot(time_hours, micro_out(2,:)/micro_out(2,2), 'Linewidth', 1.5, 'Color',colors{3}, 'linestyle','-');hold on
 % plot(time_hours, prod_out(1,:)/prod_out(1,2), 'Linewidth', 1.5, 'Color', colors{3}); hold on;
 
 % plot(time_hours, diss_out(1,:)/diss_out(1,2), 'Linewidth', 1.5, 'Color', colors{4}); hold on;
-plot(time_hours, diss_out(2,:)/diss_out(2,2), 'Linewidth', 1.5, 'linestyle','-');hold on
+plot(time_hours, diss_out(2,:)/diss_out(2,2), 'Linewidth', 1.5, 'Color',colors{4}, 'linestyle','-');hold on
 
 xlabel('Time [hours]','LineWidth',1.5,'FontSize',15);
 set(gca, 'YScale', 'log')
 ylabel('Norm. Magnitude','LineWidth',1.5,'FontSize',15);
-legend('TURB. NOCP', 'MICRO. NOCP', 'PROD. NOCP', 'DISS. NOCP');
-title('Vert. Avg. Budget Terms', 'LineWidth',1,'FontSize',13, 'FontWeight','Normal');
+legend('PROD', 'TURB', 'SRC', 'DISS');
+title('NOCP Vert. Avg. Budgets', 'LineWidth',1,'FontSize',13, 'FontWeight','Normal');
 
 
 

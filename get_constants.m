@@ -10,11 +10,11 @@ nam.Ll=2.50e6;                                                             % lat
 nam.Li=2.83e6;                                                             % latent heat of sublimation (vapor:solid) at 0C [J/kg]
 nam.T0=300;                                                                % ncread(fname,'T00'); % base state temperature [K]
 nam.P0=1.e5;                                                               % ncread(fname,'P00'); % base state pressure [Pa]
-nam.dx=double(ncreadatt(fname,'/','DX'));                                   % [m]
-nam.dy=double(ncreadatt(fname,'/','DY'));                                   % [m]
+nam.dx=double(ncreadatt(fname,'/','DX'));                                  % [m]
+nam.dy=double(ncreadatt(fname,'/','DY'));                                  % [m]
 nam.dt = 0.5;                                                              % Output frequency [hours]
-nam.levs = size(ncread(fname,'U'), 3);                                      % Number of vertical levels in the simulation
-nam.nx = size(ncread(fname,'U'), 1);                                        % Number of x grid points in simulation
+nam.levs = size(ncread(fname,'U'), 3);                                     % Number of vertical levels in the simulation
+nam.nx = size(ncread(fname,'U'), 1);                                       % Number of x grid points in simulation
 nam.ny = size(ncread(fname,'U'), 2);   
-
+nam.omega = 7.292115e-5; 
 end
