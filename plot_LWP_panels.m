@@ -1,11 +1,13 @@
 
-% This is a simpler script for plotting the CKE budgets from kardunov and
-% randall paper
+% This is a simpler script that plots the LWP panels for the simulation at
+% specified times for plotting in the paper
 
 addpath('../cmocean-main/')
+addpath('./functs/')
 
 % folder = "/Users/jwskinner/Desktop/LES Analysis/data/large_domain/NOCP_OUT/"
 folder = "/scratch/05999/mkurowsk/GATE_CP_CONSTFLX/"
+folder = "/data1/jwskinner/GATE_CP_CONSTFLX/"; 
 
 
 files = [13, 49, 97];
