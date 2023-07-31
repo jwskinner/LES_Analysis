@@ -4,6 +4,9 @@
 
 clear variables
 
+addpath('../cmocean-main/')
+addpath('./functs/')
+
 data_loc = '/data1/jwskinner/';
 folder_cp = 'GATE_CP_CONSTFLX/';
 folder_nocp = 'GATE_NOEVP1.3km_CONSTFLX_100km/';
@@ -23,8 +26,8 @@ files_all = dir(strcat(f_in_cp, 'wrfout*'));
 [nam] = get_constants(strcat(f_in_cp, files_all(1).name));
 
 % Preallocate the time arrays for the CP and NOCP cases
-data_cp_t = zeros((i_start - i_end), 11, nam.levs);
-data_nocp_t = zeros((i_start - i_end), 11, nam.levs);
+data_cp_t = zeros((i_start - i_end), 14, nam.levs);
+data_nocp_t = zeros((i_start - i_end), 14, nam.levs);
 
 % Load the vertical structure
 [Z, P, H, p, exn] = vert_struct(strcat(f_in_cp, files_all(1).name), nam);
@@ -53,92 +56,124 @@ lw = 1.5;
 colors = {'#0072BD', '#A2142F', '#EDB120', '#77AC30', '#000000'};
 style = {'-', '-', '-', '-', '--'};
 
-subplot(1, 5, 1)
-plot(squeeze(data_cp_tmean(1, 4, :)),Z/10^3,'k','LineWidth',lw); hold on; 
-plot(squeeze(data_nocp_tmean(1, 4, :)),Z/10^3,'b','LineWidth',lw); hold on; 
+subplot(1, 4, 1)
+plot(squeeze(data_cp_tmean(1, 4, :)),Z/10^3,'LineWidth',lw); hold on; 
+plot(squeeze(data_nocp_tmean(1, 4, :)),Z/10^3,'LineWidth',lw); hold on; 
 ylabel('$z$ [km]','LineWidth',1.5,'FontSize',15, 'Interpreter', 'Latex')
-xlabel('[ms$^{-1}$]','LineWidth',1.5,'FontSize',15, 'Interpreter', 'Latex')
+xlabel('[ms$^{-1}$]','LineWidth',1.5,'FontSize',13, 'Interpreter', 'Latex')
 legend('CP', 'NOCP', 'Box', 'off');
-title('$\langle {\rm U} \rangle$', 'FontSize',12, 'Interpreter', 'Latex'); hold off;
+title('$\langle {\rm u} \rangle$', 'FontSize',15, 'Interpreter', 'Latex'); hold off;
 xlim([-0.15 0])
 ylim([0 18])
 
-subplot(1, 5, 2)
-plot(squeeze(data_cp_tmean(1, 5, :)),Z/10^3,'k', 'LineWidth',lw); hold on; 
-plot(squeeze(data_nocp_tmean(1, 5, :)),Z/10^3,'b','LineWidth',lw); hold on;
+subplot(1, 4, 2)
+plot(squeeze(data_cp_tmean(1, 5, :)),Z/10^3, 'LineWidth',lw); hold on; 
+plot(squeeze(data_nocp_tmean(1, 5, :)),Z/10^3,'LineWidth',lw); hold on;
 ylabel('$z$ [km]','LineWidth',1.5,'FontSize',15, 'Interpreter', 'Latex')
-xlabel('[ms$^{-1}$]','LineWidth',1.5,'FontSize',15, 'Interpreter', 'Latex')
+xlabel('[ms$^{-1}$]','LineWidth',1.5,'FontSize',13, 'Interpreter', 'Latex')
 legend('CP', 'NOCP', 'Box', 'off');
-title('$\langle {\rm V} \rangle$', 'FontSize',12, 'Interpreter', 'Latex'); hold off;
+title('$\langle {\rm v} \rangle$', 'FontSize',15, 'Interpreter', 'Latex'); hold off;
 xlim([-1e-2 1e-2])
 ylim([0 18])
 
-subplot(1, 5, 3)
-plot(squeeze(data_cp_tmean(1, 6, :)),Z/10^3,'k','LineWidth',lw); hold on; 
-plot(squeeze(data_nocp_tmean(1, 6, :)),Z/10^3,'b','LineWidth',lw); hold on;
+subplot(1, 4, 3)
+plot(squeeze(data_cp_tmean(1, 6, :)),Z/10^3,'LineWidth',lw); hold on; 
+plot(squeeze(data_nocp_tmean(1, 6, :)),Z/10^3,'LineWidth',lw); hold on;
 ylabel('$z$ [km]','LineWidth',1.5,'FontSize',15, 'Interpreter', 'Latex')
-xlabel('[ms$^{-1}$]','LineWidth',1.5,'FontSize',15, 'Interpreter', 'Latex')
+xlabel('[ms$^{-1}$]','LineWidth',1.5,'FontSize',13, 'Interpreter', 'Latex')
 legend('CP', 'NOCP', 'Box', 'off');
-title('$\langle {\rm W} \rangle$', 'FontSize',12, 'Interpreter', 'Latex'); hold off;
+title('$\langle {\rm w} \rangle$', 'FontSize',15, 'Interpreter', 'Latex'); hold off;
 xlim([-1e-4 1e-4])
 ylim([0 18])
 
-subplot(1, 5, 4)
-plot(squeeze(data_cp_tmean(1, 7, :)),Z/10^3,'k','LineWidth',lw); hold on; 
-plot(squeeze(data_nocp_tmean(1, 7, :)),Z/10^3,'b','LineWidth',lw); hold on;
+% subplot(1, 5, 4)
+% plot(squeeze(data_cp_tmean(1, 13, :)),Z/10^3,'LineWidth',lw); hold on; 
+% plot(squeeze(data_nocp_tmean(1, 13, :)),Z/10^3,'LineWidth',lw); hold on;
+% ylabel('$z$ [km]','LineWidth',1.5,'FontSize',15, 'Interpreter', 'Latex')
+% xlabel('[gkg$^{-1}$]','LineWidth',1.5,'FontSize',13, 'Interpreter', 'Latex')
+% legend('CP', 'NOCP', 'Box', 'off');
+% title('$\langle q_{\rm t} \rangle$', 'FontSize',15, 'Interpreter', 'Latex'); hold off;
+% xlim([0 0.003])
+% ylim([0 18])
+
+subplot(1, 4, 4)
+plot(squeeze(data_cp_tmean(1, 14, :)),Z/10^3,'LineWidth',lw); hold on; 
+plot(squeeze(data_nocp_tmean(1, 14, :)),Z/10^3,'LineWidth',lw); hold on;
 ylabel('$z$ [km]','LineWidth',1.5,'FontSize',15, 'Interpreter', 'Latex')
-xlabel('[ms$^{-1}$]','LineWidth',1.5,'FontSize',15, 'Interpreter', 'Latex')
+xlabel('[m$^2$s$^{-2}$]','LineWidth',1.5,'FontSize',13, 'Interpreter', 'Latex')
 legend('CP', 'NOCP', 'Box', 'off');
-title('$\langle {\rm u}^\prime {\rm w }^\prime \rangle$', 'FontSize',12, 'Interpreter', 'Latex'); hold off;
-% xlim([-1e-4 1e-4])
+title('$\langle {\rm TKE} \rangle$', 'FontSize',15, 'Interpreter', 'Latex'); hold off;
+xlim([0 1e-2])
 ylim([0 18])
 
-subplot(1, 5, 5)
-plot(squeeze(data_cp_tmean(1, 8, :)),Z/10^3,'k','LineWidth',lw); hold on; 
-plot(squeeze(data_nocp_tmean(1, 8, :)),Z/10^3,'b','LineWidth',lw); hold on;
-ylabel('$z$ [km]','LineWidth',1.5,'FontSize',15, 'Interpreter', 'Latex')
-xlabel('[ms$^{-1}$]','LineWidth',1.5,'FontSize',15, 'Interpreter', 'Latex')
-legend('CP', 'NOCP', 'Box', 'off');
 
-title('$\langle {\rm v}^\prime {\rm w }^\prime \rangle$', 'FontSize',12, 'Interpreter', 'Latex'); hold off;
-% xlim([-1e-4 1e-4])
-ylim([0 18])
 
 %% Plot the higher moments of vertical velocity and the fluxes 
 figure('Renderer', 'painters', 'Position', [10 10 900 600]) % makes paper format figure
 
-lw = 1.5;
+lw = 1.6;
 colors = {'#0072BD', '#A2142F', '#EDB120', '#77AC30', '#000000'};
 style = {'-', '-', '-', '-', '--'};
 
-subplot(1, 3, 1)
-plot(squeeze(data_cp_tmean(1, 11, :)),Z/10^3,'k','LineWidth',lw); hold on; grid on; 
-plot(squeeze(data_nocp_tmean(1, 11, :)),Z/10^3,'b','LineWidth',lw); hold on; 
+subplot(2, 3, 1)
+plot(squeeze(data_cp_tmean(1, 11, :)),Z/10^3,'LineWidth',lw); hold on; 
+plot(squeeze(data_nocp_tmean(1, 11, :)),Z/10^3,'LineWidth',lw); hold on; 
 ylabel('$z$ [km]','LineWidth',1.5,'FontSize',15, 'Interpreter', 'Latex')
-xlabel('[ms$^{-1}$]','LineWidth',1.5,'FontSize',15, 'Interpreter', 'Latex')
+xlabel('[ms$^{-1}$]','LineWidth',1.5,'FontSize',13, 'Interpreter', 'Latex')
 legend('CP', 'NOCP', 'Box', 'off');
-title('$\langle {\rm w}^\prime \theta^\prime \rangle$', 'FontSize',12, 'Interpreter', 'Latex'); hold off;
-% xlim([-0.15 0])
+title('$\langle {\rm w}^\prime \theta^\prime \rangle$', 'FontSize',15, 'Interpreter', 'Latex'); hold off;
+xlim([-0.005 0.005])
 ylim([0 18])
 
-subplot(1, 3, 2)
-plot(squeeze(data_cp_tmean(1, 9, :)),Z/10^3,'k','LineWidth',lw); hold on;grid on; 
-plot(squeeze(data_nocp_tmean(1, 9, :)),Z/10^3,'b','LineWidth',lw); hold on; 
+subplot(2, 3, 2)
+plot(squeeze(data_cp_tmean(1, 9, :)),Z/10^3,'LineWidth',lw); hold on;
+plot(squeeze(data_nocp_tmean(1, 9, :)),Z/10^3,'LineWidth',lw); hold on; 
 ylabel('$z$ [km]','LineWidth',1.5,'FontSize',15, 'Interpreter', 'Latex')
-xlabel('[m$^2$s$^{-2}$]','LineWidth',1.5,'FontSize',15, 'Interpreter', 'Latex')
+xlabel('[m$^2$s$^{-2}$]','LineWidth',1.5,'FontSize',13, 'Interpreter', 'Latex')
 legend('CP', 'NOCP', 'Box', 'off');
-title('$\langle {\rm w}^{\prime \, 2} \rangle$', 'FontSize',12, 'Interpreter', 'Latex'); hold off;
+title('$\langle {\rm w}^{\prime \, 2} \rangle$', 'FontSize',15, 'Interpreter', 'Latex'); hold off;
 xlim([-0.01 0.04])
 ylim([0 18])
 
-subplot(1, 3, 3)
-plot(squeeze(data_cp_tmean(1, 10, :)),Z/10^3,'k','LineWidth',lw); hold on;grid on; 
-plot(squeeze(data_nocp_tmean(1, 10, :)),Z/10^3,'b','LineWidth',lw); hold on; 
+subplot(2, 3, 3)
+plot(squeeze(data_cp_tmean(1, 10, :)),Z/10^3,'LineWidth',lw); hold on; 
+plot(squeeze(data_nocp_tmean(1, 10, :)),Z/10^3,'LineWidth',lw); hold on; 
 ylabel('$z$ [km]','LineWidth',1.5,'FontSize',15, 'Interpreter', 'Latex')
-xlabel('[m$^3$s$^{-3}$]','LineWidth',1.5,'FontSize',15, 'Interpreter', 'Latex')
+xlabel('[m$^3$s$^{-3}$]','LineWidth',1.5,'FontSize',13, 'Interpreter', 'Latex')
 legend('CP', 'NOCP', 'Box', 'off');
-title('$\langle {\rm w}^{\prime \, 3} \rangle$', 'FontSize',12, 'Interpreter', 'Latex'); hold off;
+title('$\langle {\rm w}^{\prime \, 3} \rangle$', 'FontSize',15, 'Interpreter', 'Latex'); hold off;
  xlim([-0.1 0.1])
+ylim([0 18])
+
+subplot(2, 3, 4)
+plot(squeeze(data_cp_tmean(1, 7, :)),Z/10^3,'LineWidth',lw); hold on; 
+plot(squeeze(data_nocp_tmean(1, 7, :)),Z/10^3,'LineWidth',lw); hold on;
+ylabel('$z$ [km]','LineWidth',1.5,'FontSize',15, 'Interpreter', 'Latex')
+xlabel('[ms$^{-1}$]','LineWidth',1.5,'FontSize',13, 'Interpreter', 'Latex')
+legend('CP', 'NOCP', 'Box', 'off');
+title('$\langle {\rm u}^\prime {\rm w }^\prime \rangle$', 'FontSize',15, 'Interpreter', 'Latex'); hold off;
+ xlim([-1e-3 1e-3])
+ylim([0 18])
+
+subplot(2, 3, 5)
+plot(squeeze(data_cp_tmean(1, 8, :)),Z/10^3,'LineWidth',lw); hold on; 
+plot(squeeze(data_nocp_tmean(1, 8, :)),Z/10^3,'LineWidth',lw); hold on;
+ylabel('$z$ [km]','LineWidth',1.5,'FontSize',15, 'Interpreter', 'Latex')
+xlabel('[ms$^{-1}$]','LineWidth',1.5,'FontSize',15, 'Interpreter', 'Latex')
+legend('CP', 'NOCP', 'Box', 'off');
+title('$\langle {\rm v}^\prime {\rm w }^\prime \rangle$', 'FontSize',15, 'Interpreter', 'Latex'); hold off;
+xlim([-1e-3 1e-3])
+ylim([0 18])
+
+subplot(2, 3, 6)
+plot(squeeze(data_cp_tmean(1, 12, :)),Z/10^3,'LineWidth',lw); hold on; 
+plot(squeeze(data_nocp_tmean(1, 12, :)),Z/10^3,'LineWidth',lw); hold on;
+ylabel('$z$ [km]','LineWidth',1.5,'FontSize',15, 'Interpreter', 'Latex')
+xlabel('[ms$^{-1}$gkg$^{-1}$]','LineWidth',1.5,'FontSize',13, 'Interpreter', 'Latex')
+legend('CP', 'NOCP', 'Box', 'off');
+
+title('$\langle {q_{\rm t}}^\prime {\rm w }^\prime \rangle$', 'FontSize',15, 'Interpreter', 'Latex'); hold off;
+xlim([-1e-5 1e-5])
 ylim([0 18])
 
 
@@ -147,11 +182,15 @@ ylim([0 18])
 function data_out_t = get_1d_profs(fname,nam, tlen, exn)
     
     nlev = nam.levs;
-    data_out_t = zeros(11, nlev);
+    data_out_t = zeros(14, nlev);
     
     % Sets up the paramters for the plotting
-    [u, v, w, th, qv] = loadNetCDF(fname, 'U', 'V', 'W', 'T', 'QVAPOR');
+    [u, v, w, th, qv, qc, qr, qi, tke] = loadNetCDF(fname, 'U', 'V', 'W', 'T', ...
+        'QVAPOR', 'QCLOUD', 'QRAIN', 'QICE', 'TKE');
     u = u.Data; v = v.Data; w = w.Data; th = th.Data+nam.T0; qv = qv.Data;
+    qc = qc.Data; qr = qr.Data; qi = qi.Data; tke=tke.Data; 
+    
+    qt = qv + qr + qc + qi; % Total water in the system
     
     u=0.5*(u(1:end-1,:,:,:)+u(2:end,:,:,:)); %C->A grid
     v=0.5*(v(:,1:end-1,:,:)+v(:,2:end,:,:));
@@ -176,6 +215,12 @@ function data_out_t = get_1d_profs(fname,nam, tlen, exn)
     thpr(1,1,:)=TH;
     thpert=bsxfun(@minus,th,thpr);
     
+    TKE=mean(reshape(tke,nm,l));
+    
+    QT=mean(reshape(qt,nm,l));
+    qtpr(1,1,:)=QT;
+    qtpert=bsxfun(@minus,qt,qtpr);
+    
     t=th.*exn; % temperature 
     tv=t.*(1+0.608*qv);                                                    % virtual temperature, bouyancy is tv - ql (eq. 1 Marcin)
     % thil=th-(nam.Ll*qc+nam.Li*qi)./(nam.cp*exn);                         % liquid water potential temperature
@@ -196,4 +241,7 @@ function data_out_t = get_1d_profs(fname,nam, tlen, exn)
     data_out_t(9,:) = mean(reshape(wpert.*wpert, nm, l));
     data_out_t(10,:) = mean(reshape(wpert.*wpert.*wpert, nm, l));
     data_out_t(11,:) = mean(reshape(wpert.*tvpert, nm, l)); % bouyancy flux
+    data_out_t(12,:) = mean(reshape(wpert.*qtpert, nm, l));
+    data_out_t(13,:) = QT;
+    data_out_t(14,:) = TKE;
 end

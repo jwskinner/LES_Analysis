@@ -4,8 +4,8 @@
 % Define the folders for each case
 % folders = ["./data/small_domain/CP_OUT/", "./data/small_domain/NOCP_OUT/"];
 %folders = ["/scratch/05999/mkurowsk/GATE_NOCP_CONSTFLX/", "/scratch/05999/mkurowsk/GATE_NOCP_CONSTFLX_100km/", "/scratch/05999/mkurowsk/GATE_NOCP_CONSTFLX_50km/"]
-legend_text = ["NOEVP1", "NOEVP1.3", "GATE NOCP CONSTFLX"];
-folders = ["/scratch/05999/mkurowsk/GATE_NOEVP1km_CONSTFLX_50km/","/scratch/05999/mkurowsk/GATE_NOEVP1.3km_CONSTFLX_50km/", "/scratch/05999/mkurowsk/GATE_NOCP_CONSTFLX_50km/"]; 
+legend_text = ["CP", "NOCP"];
+folders = ["/data1/jwskinner/GATE_CP_CONSTFLX/","/data1/jwskinner/GATE_NOEVP1.3km_CONSTFLX_100km/"]; 
 
 % Get a list of all files in each folder
 files_cp = dir(strcat(folders{1}, 'wrfout*'));
@@ -15,7 +15,7 @@ files_all = files_cp; % choose the folder with shortest output
 num_files = length(files_cp);
 
 % Define constants
-nam = get_constants(strcat(folders(1),files_all(1).name));
+nam = get_constants(strcat(folders(1),files_all(1).name));  
 
 t_length = 100 %num_files; % Length of the timeseries
 f_length = length(folders);  % Number of datasets to loop over 
@@ -137,17 +137,32 @@ end
 
 %% Output the LWP, CLWP and cloud fraction
 figure(); 
-subplot(3, 1, 1);
+subplot(4, 1, 1);
 generate_subplot(LWP_out, time_hours,  legend_text, '', 'Liquid Water Path', folders);
+xlim([0, 48]);
+xticks([0, 12, 24, 36, 48]); 
+legend boxoff 
 
 % subplot(3, 1, 2);
 % generate_subplot(CLWP_out, time_hours,  legend_text, '', 'Cloud Water Path', folders);
 
-subplot(3, 1, 2);
+subplot(4, 1, 2);
 generate_subplot(RWP_out, time_hours,  legend_text, '', 'Rain Water Path', folders);
+xlim([0, 48])
+xticks([0, 12, 24, 36, 48]);
+legend boxoff 
 
-subplot(3, 1, 3);
+subplot(4, 1, 3);
 generate_subplot(CloudFrac_out, time_hours,  legend_text, '', 'Cloud Fraction', folders);
+xlim([0,48])
+xticks([0, 12, 24, 36, 48]); 
+legend boxoff 
+
+subplot(4, 1, 4);
+generate_subplot(TKE_out, time_hours,  legend_text, '', 'Vert. integrated TKE', folders);
+xlim([0,48])
+xticks([0, 12, 24, 36, 48]); 
+legend boxoff 
 
 %%
 figure();
@@ -195,6 +210,9 @@ function generate_subplot(data, time_hours, legend_text, title_text, ...
     if nargin > 6
         ylim(ylim_range);
     end
+    xlim([0, 48]);
+    xticks([0, 12, 24, 36, 48]); 
+    legend boxoff 
     
 end
 

@@ -1,9 +1,10 @@
 % Script for computing moisture variance timeseries and timeseries of the
 % budget terms (to be added later on)
 %
-% [Warning: This is an old script now]
-%
 % Updated by J. W. Skinner (2023-28-02)
+
+addpath('../cmocean-main/')
+addpath('./functs/')
 
 % Define the folders for each case
 %cold_pools = ["./data/small_domain/CP_OUT/", "./data/small_domain/NOCP_OUT/"];

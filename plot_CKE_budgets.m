@@ -1,7 +1,9 @@
-
-% This is a simpler script for plotting the CKE budgets from kardunov and
+% J.W.Skinner 07/27/23 
+% This is a test script used to develop the functions for plotting the CKE budgets from kardunov and
 % randall paper 
-% This is a mess right now, i'll break it into cleaner functions later
+
+addpath('../cmocean-main/')
+addpath('./functs/')
 
 data_loc = '/data1/jwskinner/';
  folder = 'GATE_NOEVP1.3km_CONSTFLX_50km/';
@@ -159,7 +161,7 @@ CTKE_S_Term = -RHO .* (UW_pert.*du_dz + VW_pert.*dv_dz);
 
 
 % Bouyancy production term 
-Beta = nam.g ./ TH; % JACK double check this term 
+Beta = nam.g ./ TV; % JACK double check this term 
 
 B_flx = mean(reshape(wpert.*tvpert,nm,l));  % buoyancy flux
 CTKE_B_Term = -RHO.*Beta.*B_flx;

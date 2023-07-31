@@ -4,9 +4,12 @@
 % budgets then plots them. 
 clear variables 
 
+addpath('../cmocean-main/')
+addpath('./functs/')
+
 data_loc = '/data1/jwskinner/';
-folder = 'GATE_CP_CONSTFLX/'; 
-% folder = 'GATE_NOEVP1.3km_CONSTFLX_100km/';
+%folder = 'GATE_CP_CONSTFLX/'; 
+folder = 'GATE_NOEVP1.3km_CONSTFLX_100km/';
 
 % index of file to start and finish the averaging over
 i_start = 89; 
@@ -70,7 +73,7 @@ colors = {'#0072BD', '#A2142F', '#EDB120', '#77AC30', '#000000'};
 style = {'-', '-', '-', '-', '--'};
 
 % DIAGNOSTIC PLOT OF TIME VARYING BUDGETS 
-alpha = 0.5; 
+alpha = 1.0; 
 rgbC = []
 for i = 1:5 
     rgb = sscanf(colors{i}(2:end), '%2x')/255;
@@ -86,7 +89,7 @@ for i = 1:(i_end-i_start)
 end
 ylabel('$z$ [km]','LineWidth',1.5,'FontSize',15, 'Interpreter', 'Latex')
 legend('PROD','TURB','SRC','DISS','RES');
-title('$\langle \overline{q_t} \rangle$ variance budget', 'FontSize',12, 'Interpreter', 'Latex'); hold off;
+title('$\langle \overline{q_t} \rangle$ variance budget', 'FontSize',15, 'Interpreter', 'Latex'); hold off;
 xlim([-1e-3 1e-3])
 ylim([0 18])
 
@@ -99,7 +102,7 @@ for i = 1:(i_end-i_start)
 end
 ylabel('$z$ [km]','LineWidth',1.5,'FontSize',15, 'Interpreter', 'Latex')
 legend('PROD','TURB','SRC','DISS','RES');
-title('$\langle \overline{\theta_l} \rangle$ variance budget', 'FontSize',12, 'Interpreter', 'Latex'); hold off;
+title('$\langle \overline{\theta_l} \rangle$ variance budget', 'FontSize',15, 'Interpreter', 'Latex'); hold off;
 xlim([-1e-3 1e-3])
 ylim([0 18])
 
@@ -113,7 +116,7 @@ end
 ylabel('$z$ [km]','LineWidth',1.5,'FontSize',15, 'Interpreter', 'Latex')
 % legend('Production','Turbulent transport','Microphysical sources/sinks','Dissipation','Residual');
 legend('PROD','TURB','SRC','DISS','RES');
-title('$t$ average $\langle \overline{q_t} \rangle$ variance budget', 'FontSize',12, 'Interpreter', 'Latex'); hold off;
+title('$t$ average $\langle \overline{q_t} \rangle$ variance budget', 'FontSize',15, 'Interpreter', 'Latex'); hold off;
 xlim([-1e-3 1e-3])
 ylim([0 18])
 
@@ -125,7 +128,7 @@ end
 ylabel('$z$ [km]','LineWidth',1.5,'FontSize',15, 'Interpreter', 'Latex')
 % legend('Production','Turbulent transport','Microphysical sources/sinks','Dissipation','Residual');
 legend('PROD','TURB','SRC','DISS','RES');
-title('$t$ average $\langle \overline{\theta_l} \rangle$ variance budget', 'FontSize',12, 'Interpreter', 'Latex'); hold off;
+title('$t$ average $\langle \overline{\theta_l} \rangle$ variance budget', 'FontSize',15, 'Interpreter', 'Latex'); hold off;
 xlim([-1e-3 1e-3])
 ylim([0 18])
 

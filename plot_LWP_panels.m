@@ -6,8 +6,9 @@ addpath('../cmocean-main/')
 addpath('./functs/')
 
 % folder = "/Users/jwskinner/Desktop/LES Analysis/data/large_domain/NOCP_OUT/"
-folder = "/scratch/05999/mkurowsk/GATE_CP_CONSTFLX/"
-folder = "/data1/jwskinner/GATE_CP_CONSTFLX/"; 
+% folder = "/scratch/05999/mkurowsk/GATE_CP_CONSTFLX/"
+% folder = "/data1/jwskinner/GATE_CP_CONSTFLX/"; 
+folder = "/data1/jwskinner/GATE_NOEVP1.3km_CONSTFLX_100km/"
 
 
 files = [13, 49, 97];
@@ -61,19 +62,24 @@ for i = 1:length(files)
     Z=H./nam.g';                                                               % height at mass-levels [m]
     p=p+pb;                                                                    % pressure
     exn=(p/nam.P0).^(nam.R/nam.cp);                                            % exner function
+    
     qt=qv+qc+qi;                                                               % total water mixing ratio [kg/kg] (no precipitating elements)
-
-    ql = qr + qc; %liquid water in the system
+    ql = qr;                                                                   % precipiatating liquid water in the system
 
     t=th.*exn;                                                                 % temperature
     tv=t.*(1+0.608*qv);                                                        % virtual temperature, bouyancy is tv - ql (eq. 1 Marcin)
     rho=p./(nam.R*tv);                                                         % density
 
     % Total water LWP
-    %qtrho = qt.*rho;
-    qtrho = ql.*rho; % Just the liquids
-
-    LWP = trapz(Z',qtrho,3);                                                   % vertically integrated LWP
+    qtrho = qt.*rho;
+    
+    qlrho = ql.*rho; % Just the liquids
+    
+    LLWP = trapz(Z',qlrho,3);
+    LWP = trapz(Z',qtrho,3);                                               % vertically integrated LWP
+    
+    % Compute total precipitatable water
+    TPW = (1./(1000.*nam.g))*trapz(Z', qv, 3);                             % Note: 1 kg/m2 = 1 mm
 
     x_km = linspace(0, (n*nam.dx)/1000, n);
     y_km = linspace(0, (n*nam.dy)/1000, n);
@@ -82,7 +88,8 @@ for i = 1:length(files)
 
     subplot(1, 3, i); % add this line to specify the subplot
 
-    cmap = cmocean('rain');
+    cmap = cmocean('tempo');
+    cmap = colormap('bone'); 
 
     imagesc(x_km, y_km, LWP); % use imagesc instead of image to use the logarithmic scale
     set(gca, 'YDir', 'normal'); % flip the y-axis to match the image orientation
@@ -93,8 +100,9 @@ for i = 1:length(files)
 
     % Create colorbar
     c = colorbar;
-    caxis([0 1]); % set the color limits
-    c.Label.String = 'LWP'; % add a label to the colorbar
+     caxis([50 55]); % set the color limits
+%    c.Label.String = 'LWP'; % add a label to the colorbar
+    c.Label.String='TPW [mm]'
 
     xlim([min(x_km) max(x_km)])
     ylim([min(y_km) max(y_km)])
