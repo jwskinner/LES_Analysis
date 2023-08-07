@@ -5,14 +5,17 @@
 
 clear variables
 
-scratch = "/scratch/05999/mkurowsk/"; % For Tacc
-%scratch = "./data/"; % For jacks laptop
+addpath(['../cmocean-main/'])
+addpath('./functs/')
 
-% folders = ["./small_domain/CP_OUT/", "./small_domain/NOCP_OUT/"]
+% scratch = "/scratch/05999/mkurowsk/"; % For Tacc
+scratch = "./data/"; % For jacks laptop
+
+ folders = ["./small_domain/CP_OUT/", "./small_domain/NOCP_OUT/"]
 %folders = ["./GATE_NOCP_int_domain/", "./GATE_CP_int_domain/"];
 %folders = ["ocean_cp/", "ocean_nocp/"];
 % folders = ["GATE_NOEVP1km_CONSTFLX_50km/", "GATE_NOEVP1.3km_CONSTFLX_100km/", "GATE_NOEVP1km_CONSTFLX_100km/"];
-folders = ["GATE_NOEVP1km_CONSTFLX_50km/"];
+% folders = ["GATE_NOEVP1km_CONSTFLX_50km/"];
 
 % Takes the first folder for loading in params.
 folder = strcat(scratch, folders(1));  %'./data/large_domain/CP_OUT/' %'/scratch/05999/mkurowsk/ocean_nocp/' on TACC;
@@ -39,7 +42,7 @@ nam.ny = size(ncread(sample_file,'U'), 2);                                 % Num
 nam.txt = 'NOCP';
 
 % Plot diagnostic
-plot_out = 3;  % 0: Fields, 1: Budgets, 2:LWP, 3:1D profiles, 4: Vertical Structure, 5: KE Spectra
+plot_out = 2;  % 0: Fields, 1: Budgets, 2:LWP, 3:1D profiles, 4: Vertical Structure, 5: KE Spectra
 
 % For creating movies frame by frame
 for i = 1:103 %length(files_all)
@@ -83,6 +86,7 @@ for i = 1:103 %length(files_all)
         params.output = output;
         params.time = time;
         params.export = 'mov';                                             % export as 'frames' or 'movie'.
+        params.cmap = cmocean('delta');
         plot_lwp(file, folder, nam, params)
     end
 

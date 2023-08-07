@@ -177,23 +177,27 @@ dUP_dz = gradient(UP, Z);
 MOM_P_Term = - dUP_dz; 
 
 % Pressure Anisotropy term (R)
-X = linspace(0, (n-1)*nam.dx, nam.nx);                                     % Create the 1D array with the specified spacing and number of elements
+dx = nam.dx;                                                               % Grid spacing along the x dimension
+dz = Z(2) - Z(1);                                                          % a grid spacing along the z dimension
+X = linspace(0, (n-1)*nam.dx, nam.nx-1);                                   % Create the 1D array with the specified spacing and number of elements
 
-% Assuming RHO is a row vector (1 x 127)
+% RHO is a row vector (1 x 127)
 RHO_column = RHO';
 
-size(RHO_column)
-
-% Replicate RHO along the first two dimensions to match the size of wpert
-RHO_replicated = repmat(RHO_column, nam.nx-1, 1);
-
 % Perform element-wise multiplication between RHO_replicated and wpert
-size(RHO_replicated)
-size(wpert)
-RHO_wpert = RHO_replicated .* wpert;
-dA_dx = gradient(RHO_wpert, X);
-dB_dz = gradient(RHO_wpert, Z);
-MOM_R_term = mean(reshape(PPERT./RHO .*(dA_dx + dB_dz),nm,l));
+RHO_wpert = rho .* wpert;
+for col = 1:size(RHO_wpert, 2)
+    dA_dx(:, col, :) = gradient(RHO_wpert(:, col, :), dx);
+end
+
+for zz = 1:size(RHO_wpert, 3)
+    dB_dz(:, :, zz) = gradient(RHO_wpert(:, :, zz), dz);
+end
+
+%dA_dx = gradient(RHO_wpert, X, dx);
+%dB_dz = gradient(RHO.*WPERT, Z); % Old way
+
+MOM_R_Term = mean(reshape(ppert./rho .*(dA_dx + dB_dz),nm,l));
 
 
 %% Compute the TKE dissiaption from the WRF model code [new method]
@@ -252,7 +256,7 @@ dx =nam.dx; dy = nam.dy;
 
 
 % Residuals 
-MOM_Res = MOM_T_Term + MOM_P_Term + MOM_S_Term + MOM_B_Term + + MOM_R_Term + D_Term; 
+MOM_Res = MOM_T_Term + MOM_P_Term + MOM_S_Term + MOM_B_Term + MOM_R_Term + D_Term; 
 
 
 mom_var.Bterm = MOM_B_Term; 

@@ -1,4 +1,4 @@
-function [cke_var, scaling] = comp_cke_budgets(fname, nam, i)
+function [uv_var, w_var] = comp_uvw_budgets(fname, nam, i)
 
 time = nam.dt * i;
 
@@ -107,6 +107,7 @@ thilpert=bsxfun(@minus,thil,thilpr);
 U=mean(reshape(u,nm,l));
 upr(1,1,:)=U;
 upert=bsxfun(@minus,u,upr);
+UPERT=mean(reshape(upert,nm,l));
 
 V=mean(reshape(v,nm,l));
 vpr(1,1,:)=V;
@@ -130,6 +131,7 @@ TKE_W = 0.5*mean(reshape(wpert,nm,l)).^2;
 P=mean(reshape(p,nm,l));
 ppr(1,1,:)=P;
 ppert=bsxfun(@minus,p,ppr);
+PPERT=mean(reshape(ppert,nm,l));
 
 % Density 
 rho=p./(nam.R*tv);              
@@ -152,37 +154,31 @@ KE=mean(reshape(ke,nm,l));
 kepr(1,1,:)=KE;
 ke_pert=bsxfun(@minus,ke,kepr);
 
-
 %% ========================================================================
-% CKE Budget terms from Equation (5) of Khairoutdinov and Randall 2001
+% uvw Horizontal and vertical velocity variance budgets terms from 
+% Equations (6-7) of Khairoutdinov and Randall 2001
 
-% Transport term 
-WE_pert = mean(reshape(wpert .* cke_pert,nm,l));
-dWE_dz = gradient(WE_pert, Z);
-CTKE_T_Term = -dWE_dz; % Jack checked ok.
+% First compute horiontal budget rho <u^2 + v^2>
 
-% Pressure Correlation term 
-WP = mean(reshape(wpert.*ppert,nm,l));
-dWP_dz = gradient(WP, Z);
-CTKE_P_Term = - dWP_dz; % Jack the sign of plot isn't consistent with K&R fig 6 -- chase this down.
+% Transport term (T)
+WEk_pert = mean(reshape(wpert .* (upert.^2 + vpert.^2) / 2,nm,l));
+dEk_dz = gradient(RHO.*WEk_pert, Z);
 
-% Mean vertical wind shear term
-UW_pert = mean(reshape(upert .* wpert,nm,l));
+UV_T_Term = - dEk_dz; 
+
+% Mean vertical wind shear term (S)
 du_dz = gradient(U, Z);
-VW_pert = mean(reshape(vpert .* wpert,nm,l));
 dv_dz = gradient(V, Z);
-CTKE_S_Term = -RHO .* (UW_pert.*du_dz + VW_pert.*dv_dz); % Jack checked ok.
+UW = mean(reshape(upert.*wpert,nm,l));
+VW = mean(reshape(vpert.*wpert,nm,l));
 
+UV_S_Term = - RHO .* (UW.*du_dz + VW.*dv_dz); 
 
-% Bouyancy production term 
-Beta = nam.g ./ TV; % From Stull page 152 
+% Pressure Redistribution Term (R)
 
-B_flx = mean(reshape(wpert.*tvpert,nm,l));  % buoyancy flux
-CTKE_B_Term = RHO.*Beta.*B_flx;
+drhow_dz = gradient(mean(reshape(rho.*wpert,nm,l)), Z);
+UV_R_Term = - (PPERT./RHO).*drhow_dz; 
 
-% Viscous dissipation term [old method]
-% [dthildx,dthildy,dthildz]=gradient((thilpert),nam.dx,nam.dy,50);
-% D_Term=-2*squeeze(mean(mean(kh.*(dthildx.^2+dthildy.^2+dthildz.^2))));
 
 %% Compute the TKE dissiaption from the WRF model code [new method]
 dx =nam.dx; dy = nam.dy; 
@@ -240,56 +236,13 @@ dx =nam.dx; dy = nam.dy;
 
 
 % Residuals 
-
-CTKE_Res = CTKE_T_Term + CTKE_P_Term + CTKE_S_Term + CTKE_B_Term + D_Term; 
-
-%% Fluxes 
-M_flx = mean(reshape(qtpert .* wpert,nm,l)); % Moisture flux  
-
-% ========================================================================
-% TKE Budget terms from Stull 1988
-TKE_e = 0.5*(upert.^2 + vpert.^2 +wpert.^2);
-
-TKE_B_Term = (nam.g./TH).*(mean(reshape(wpert.*thpert,nm,l)));             % Bouyant production Term
-TKE_S_Term = -(mean(reshape(upert.*wpert,nm,l))).*gradient(U, Z);          % Shear Term
-TKE_T_Term = -gradient(mean(reshape(wpert.*TKE_e,nm,l)), Z);               % Turbulent transport of TKE
-TKE_P_Term = -(1./RHO).*gradient(mean(reshape(wpert.*ppert,nm,l)), Z);     % Pressure correlation term
-
-cke_var.Bterm = CTKE_B_Term; 
-cke_var.Sterm = CTKE_S_Term;
-cke_var.Tterm = CTKE_T_Term;
-cke_var.Pterm = CTKE_P_Term;
-cke_var.Dterm = D_Term;
-cke_var.Res = CTKE_Res; 
-
-%% Compute Normalisation terms for the plots from K&R  
-% ========================================================================
-% non dimensionalize the equations by (rho* w*^3) /z* 
-% Here the height will be scaled by z* -- defined as the height at which 
-% the buoyancy flux near the  cloud  top  is  most  negative.
-
-% plot out buoyancy flux to pinpoint location for z*
-z_idx = 93; %84                                                            % index of height z* where bouyancy flux is most negative. 
-z_star = Z(z_idx);
-
-figure()
-plot(B_flx);
-
-% Compute rho_* term 
-rho_star = (1/Z(z_idx)).*trapz(RHO(1:z_idx), Z(1:z_idx)); 
-
-% compute w^3_* term: 
-z_trop = find(Z>=0 & Z<=12000);                                            % isolate the tropospheric region 
-
-% Compute mean tropospheric temperature
-temp_trop = squeeze(mean(t(:,:,z_trop), [1,3]));                           % Average temperature over tropospheric altitudes
-mean_temp_trop = mean(temp_trop);                                          % Mean temperature of troposphere - THETA term in eq (1) of Khairoutdinov and Randall 2001
-
-w_3_star = 2.5*(nam.g/(mean_temp_trop*rho_star)).*trapz(RHO(1:z_idx).*B_flx(1:z_idx), Z(1:z_idx)); 
-
-% Write out the scaling values for x and y directions
-scaling.x = (rho_star * w_3_star)/Z(z_idx);
-scaling.y = Z/z_star; 
+UV_Res = UV_T_Term + UV_S_Term + UV_R_Term + D_Term; 
+ 
+uv_var.Sterm = UV_S_Term;
+uv_var.Tterm = UV_T_Term;
+uv_var.Rterm = UV_R_Term;
+uv_var.Dterm = D_Term;
+uv_var.Res = UV_Res; 
 
 
 end
