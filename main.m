@@ -86,7 +86,7 @@ for i = 1:103 %length(files_all)
         params.output = output;
         params.time = time;
         params.export = 'mov';                                             % export as 'frames' or 'movie'.
-        params.cmap = cmocean('delta');
+        params.cmap = cmocean('dense');
         plot_lwp(file, folder, nam, params)
     end
 
